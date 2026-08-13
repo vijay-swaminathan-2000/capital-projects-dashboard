@@ -7,16 +7,21 @@
 <style>
   :root {
     color-scheme: light;
-    --surface-1:      #fcfcfb;
-    --page-plane:     #f9f9f7;
-    --text-primary:   #0b0b0b;
-    --text-secondary: #52514e;
-    --text-muted:     #898781;
-    --gridline:       #e1e0d9;
-    --baseline:       #c3c2b7;
-    --border:         rgba(11,11,11,0.10);
+    /* Off-white ground with a faint cool bias toward the blue accent */
+    --page-plane:     #f0f2f4;
+    --page-plane-2:   #e8ebef;
+    --surface-1:      #fbfcfd;
+    --surface-2:      #ffffff;
+    --text-primary:   #14181c;
+    --text-secondary: #49525a;
+    --text-muted:     #79828b;
+    --gridline:       #e0e5ea;
+    --baseline:       #c2cad2;
+    --border:         rgba(20,24,28,0.09);
+    --border-strong:  rgba(20,24,28,0.16);
     --series-1:       #2a78d6;
-    --series-planned: #898781;
+    --series-1-soft:  rgba(42,120,214,0.13);
+    --series-planned: #8b949d;
     --good:           #0ca30c;
     --warning:        #b9790a;
     --serious:        #c9622f;
@@ -25,21 +30,33 @@
     --warning-bg:     rgba(250,178,25,0.16);
     --serious-bg:     rgba(236,131,90,0.14);
     --critical-bg:    rgba(208,59,59,0.10);
-    --card-shadow:    0 1px 2px rgba(11,11,11,0.06), 0 1px 8px rgba(11,11,11,0.04);
+    --good-ink:       #0a7a0a;
+    --warning-ink:    #8a5c07;
+    --serious-ink:    #9c4c26;
+    --critical-ink:   #b32f2f;
+    --shadow-sm:      0 1px 2px rgba(20,24,28,0.05), 0 1px 3px rgba(20,24,28,0.04);
+    --shadow-md:      0 2px 4px rgba(20,24,28,0.05), 0 6px 16px rgba(20,24,28,0.06);
+    --shadow-lg:      0 4px 10px rgba(20,24,28,0.07), 0 16px 34px rgba(20,24,28,0.09);
+    --ease:           cubic-bezier(0.22, 0.61, 0.36, 1);
+    --ease-out:       cubic-bezier(0.16, 1, 0.3, 1);
   }
   @media (prefers-color-scheme: dark) {
     :root:where(:not([data-theme="light"])) {
       color-scheme: dark;
-      --surface-1:      #1a1a19;
-      --page-plane:     #0d0d0d;
+      --page-plane:     #0e1113;
+      --page-plane-2:   #14181b;
+      --surface-1:      #181c20;
+      --surface-2:      #1e2328;
       --text-primary:   #ffffff;
-      --text-secondary: #c3c2b7;
-      --text-muted:     #898781;
-      --gridline:       #2c2c2a;
-      --baseline:       #383835;
+      --text-secondary: #bfc7ce;
+      --text-muted:     #858e96;
+      --gridline:       #272c31;
+      --baseline:       #363d43;
       --border:         rgba(255,255,255,0.10);
+      --border-strong:  rgba(255,255,255,0.18);
       --series-1:       #3987e5;
-      --series-planned: #898781;
+      --series-1-soft:  rgba(57,135,229,0.18);
+      --series-planned: #858e96;
       --good:           #0ca30c;
       --warning:        #fab219;
       --serious:        #ec835a;
@@ -48,21 +65,31 @@
       --warning-bg:     rgba(250,178,25,0.14);
       --serious-bg:     rgba(236,131,90,0.14);
       --critical-bg:    rgba(230,103,103,0.14);
-      --card-shadow:    0 1px 2px rgba(0,0,0,0.3), 0 1px 8px rgba(0,0,0,0.2);
+      --good-ink:       #2fbf2f;
+      --warning-ink:    #fab219;
+      --serious-ink:    #ec835a;
+      --critical-ink:   #e66767;
+      --shadow-sm:      0 1px 2px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.25);
+      --shadow-md:      0 2px 4px rgba(0,0,0,0.4), 0 6px 16px rgba(0,0,0,0.3);
+      --shadow-lg:      0 4px 10px rgba(0,0,0,0.45), 0 16px 34px rgba(0,0,0,0.4);
     }
   }
   :root[data-theme="dark"] {
     color-scheme: dark;
-    --surface-1:      #1a1a19;
-    --page-plane:     #0d0d0d;
+    --page-plane:     #0e1113;
+    --page-plane-2:   #14181b;
+    --surface-1:      #181c20;
+    --surface-2:      #1e2328;
     --text-primary:   #ffffff;
-    --text-secondary: #c3c2b7;
-    --text-muted:     #898781;
-    --gridline:       #2c2c2a;
-    --baseline:       #383835;
+    --text-secondary: #bfc7ce;
+    --text-muted:     #858e96;
+    --gridline:       #272c31;
+    --baseline:       #363d43;
     --border:         rgba(255,255,255,0.10);
+    --border-strong:  rgba(255,255,255,0.18);
     --series-1:       #3987e5;
-    --series-planned: #898781;
+    --series-1-soft:  rgba(57,135,229,0.18);
+    --series-planned: #858e96;
     --good:           #0ca30c;
     --warning:        #fab219;
     --serious:        #ec835a;
@@ -71,155 +98,338 @@
     --warning-bg:     rgba(250,178,25,0.14);
     --serious-bg:     rgba(236,131,90,0.14);
     --critical-bg:    rgba(230,103,103,0.14);
-    --card-shadow:    0 1px 2px rgba(0,0,0,0.3), 0 1px 8px rgba(0,0,0,0.2);
+    --good-ink:       #2fbf2f;
+    --warning-ink:    #fab219;
+    --serious-ink:    #ec835a;
+    --critical-ink:   #e66767;
+    --shadow-sm:      0 1px 2px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.25);
+    --shadow-md:      0 2px 4px rgba(0,0,0,0.4), 0 6px 16px rgba(0,0,0,0.3);
+    --shadow-lg:      0 4px 10px rgba(0,0,0,0.45), 0 16px 34px rgba(0,0,0,0.4);
   }
 
   * { box-sizing: border-box; }
+
   body {
     margin: 0;
-    background: var(--page-plane);
+    background:
+      radial-gradient(1200px 600px at 15% -10%, var(--page-plane-2), transparent 60%),
+      var(--page-plane);
+    background-attachment: fixed;
     color: var(--text-primary);
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 32px 24px 80px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 24px 88px; }
 
-  header.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
-  header.top h1 { font-size: 22px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  /* ---------- Header ---------- */
+  header.top {
+    display: flex; justify-content: space-between; align-items: flex-end; gap: 20px;
+    padding-bottom: 22px; margin-bottom: 34px; border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .eyebrow {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--series-1); margin-bottom: 9px;
+  }
+  header.top h1 {
+    font-size: 30px; line-height: 1.12; margin: 0 0 7px; letter-spacing: -0.025em; font-weight: 640;
+    text-wrap: balance;
+  }
   header.top p { margin: 0; color: var(--text-secondary); font-size: 14px; }
   .portfolio-badge {
-    font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase;
     color: var(--text-secondary); background: var(--surface-1); border: 1px solid var(--border);
-    padding: 6px 10px; border-radius: 6px; white-space: nowrap;
+    padding: 7px 12px; border-radius: 999px; white-space: nowrap; box-shadow: var(--shadow-sm);
   }
 
-  section { margin-bottom: 36px; }
-  h2.section-title { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin: 0 0 12px; font-weight: 600; }
-
-  .tile-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-  .tile {
-    background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px;
-    padding: 16px 18px; box-shadow: var(--card-shadow);
+  section { margin-bottom: 40px; }
+  h2.section-title {
+    font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.11em;
+    color: var(--text-muted); margin: 0 0 14px; font-weight: 650;
   }
-  .tile .label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
-  .tile .value { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; }
-  .tile .sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
 
-  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--card-shadow); padding: 20px; }
-
-  .status-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 4px 10px 4px 8px; border-radius: 999px; }
-  .status-pill .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
-  .status-good     { background: var(--good-bg);     color: var(--good); }
-  .status-warning  { background: var(--warning-bg);  color: #8a5c07; }
-  .status-serious  { background: var(--serious-bg);  color: #9c4c26; }
-  .status-critical { background: var(--critical-bg); color: var(--critical); }
-  @media (prefers-color-scheme: dark) {
-    :root:where(:not([data-theme="light"])) .status-warning { color: var(--warning); }
-    :root:where(:not([data-theme="light"])) .status-serious { color: var(--serious); }
+  /* ---------- Surfaces ---------- */
+  .tile-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .tile, .card, .chart-card, .kpi-card, .narrative-card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.32s var(--ease), transform 0.32s var(--ease), border-color 0.32s var(--ease);
   }
-  :root[data-theme="dark"] .status-warning { color: var(--warning); }
-  :root[data-theme="dark"] .status-serious { color: var(--serious); }
+  .tile { padding: 18px 20px; position: relative; overflow: hidden; }
+  .tile:hover, .kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-strong);
+  }
+  .chart-card:hover, .card:hover { box-shadow: var(--shadow-md); }
+  .tile .label { font-size: 11.5px; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 0.01em; }
+  .tile .value {
+    font-size: 27px; font-weight: 650; letter-spacing: -0.028em; line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .tile .sub { font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
+  .card, .chart-card { padding: 22px; }
 
-  .legend { display: flex; gap: 16px; align-items: center; font-size: 12px; color: var(--text-secondary); flex-wrap: wrap; }
-  .legend .item { display: flex; align-items: center; gap: 6px; }
-  .legend .swatch { width: 14px; height: 3px; border-radius: 2px; }
+  /* ---------- Status ---------- */
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 650;
+    padding: 6px 13px 6px 10px; border-radius: 999px; letter-spacing: 0.01em; white-space: nowrap;
+  }
+  .status-pill .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; position: relative; }
+  .status-good     { background: var(--good-bg);     color: var(--good-ink); }
+  .status-warning  { background: var(--warning-bg);  color: var(--warning-ink); }
+  .status-serious  { background: var(--serious-bg);  color: var(--serious-ink); }
+  .status-critical { background: var(--critical-bg); color: var(--critical-ink); }
+  .status-pill.alert .dot::after {
+    content: ""; position: absolute; inset: -4px; border-radius: 50%;
+    border: 2px solid currentColor; opacity: 0; animation: ping 2.6s var(--ease-out) infinite;
+  }
+  @keyframes ping {
+    0%   { transform: scale(0.55); opacity: 0.55; }
+    70%  { transform: scale(1.5);  opacity: 0; }
+    100% { transform: scale(1.5);  opacity: 0; }
+  }
+
+  /* ---------- Legend / charts ---------- */
+  .legend { display: flex; gap: 18px; align-items: center; font-size: 11.5px; color: var(--text-secondary); flex-wrap: wrap; }
+  .legend .item { display: flex; align-items: center; gap: 7px; }
+  .legend .swatch { width: 15px; height: 3px; border-radius: 2px; }
   .legend .swatch.dot { width: 8px; height: 8px; border-radius: 50%; }
   .legend .swatch.dashed { background: repeating-linear-gradient(90deg, var(--series-planned) 0 6px, transparent 6px 10px); }
 
-  .chart-card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--card-shadow); padding: 20px; }
-  .chart-card .chart-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
-  .chart-title { font-size: 14px; font-weight: 600; }
-  .table-toggle { font-size: 12px; color: var(--series-1); background: none; border: none; cursor: pointer; padding: 0; text-decoration: underline; }
-  .sr-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; display: none; }
-  .sr-table.show { display: table; }
-  .sr-table th, .sr-table td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--gridline); color: var(--text-secondary); }
-  .sr-table th { color: var(--text-muted); font-weight: 600; }
+  .chart-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  .chart-title { font-size: 14px; font-weight: 650; letter-spacing: -0.008em; }
 
-  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
-  .tab-btn {
-    font-size: 13px; font-weight: 500; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border);
-    background: var(--surface-1); color: var(--text-secondary); cursor: pointer;
+  .link-btn {
+    font-size: 12px; color: var(--series-1); background: none; border: none; cursor: pointer;
+    padding: 3px 0; font-family: inherit; position: relative;
   }
-  .tab-btn.active { background: var(--text-primary); color: var(--page-plane); border-color: var(--text-primary); }
+  .link-btn::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 1px; height: 1px;
+    background: currentColor; transform: scaleX(1); transform-origin: left;
+    transition: transform 0.28s var(--ease); opacity: 0.55;
+  }
+  .link-btn:hover::after { transform: scaleX(0); transform-origin: right; }
+  .link-btn:disabled { opacity: 0.5; cursor: default; }
+  .link-btn:focus-visible { outline: 2px solid var(--series-1); outline-offset: 3px; border-radius: 3px; }
 
-  .project-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
-  .project-header h3 { margin: 0 0 4px; font-size: 18px; }
+  .sr-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 14px; display: none; }
+  .sr-table.show { display: table; animation: fadeUp 0.4s var(--ease-out) both; }
+  .sr-table th, .sr-table td { text-align: left; padding: 7px 9px; border-bottom: 1px solid var(--gridline); color: var(--text-secondary); }
+  .sr-table th { color: var(--text-muted); font-weight: 650; }
+
+  /* ---------- Tabs ---------- */
+  .tabs { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 18px; }
+  .tab-btn {
+    font-size: 13px; font-weight: 540; padding: 9px 16px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--surface-1); color: var(--text-secondary);
+    cursor: pointer; font-family: inherit;
+    transition: background 0.26s var(--ease), color 0.26s var(--ease),
+                border-color 0.26s var(--ease), transform 0.26s var(--ease), box-shadow 0.26s var(--ease);
+  }
+  .tab-btn:hover { transform: translateY(-2px); border-color: var(--border-strong); box-shadow: var(--shadow-sm); }
+  .tab-btn.active {
+    background: var(--text-primary); color: var(--surface-1);
+    border-color: var(--text-primary); box-shadow: var(--shadow-md);
+  }
+  .tab-btn:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
+
+  /* ---------- Project detail ---------- */
+  #projectDetail { transition: opacity 0.22s var(--ease), transform 0.22s var(--ease); }
+  #projectDetail.swapping { opacity: 0; transform: translateY(7px); }
+
+  .project-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; flex-wrap: wrap; margin-bottom: 20px; }
+  .project-header h3 { margin: 0 0 5px; font-size: 20px; letter-spacing: -0.018em; font-weight: 640; }
   .project-header .meta { font-size: 13px; color: var(--text-secondary); }
 
-  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-  .kpi-card { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; background: var(--surface-1); }
-  .kpi-card .kpi-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
-  .kpi-card .kpi-value { font-size: 20px; font-weight: 600; }
-  .kpi-card .kpi-value.good { color: var(--good); }
-  .kpi-card .kpi-value.bad { color: var(--critical); }
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+  .kpi-card { padding: 16px 18px; }
+  .kpi-card .kpi-label { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.075em; margin-bottom: 8px; font-weight: 600; }
+  .kpi-card .kpi-value { font-size: 23px; font-weight: 650; letter-spacing: -0.025em; font-variant-numeric: tabular-nums; }
+  .kpi-card .kpi-value.good { color: var(--good-ink); }
+  .kpi-card .kpi-value.bad  { color: var(--critical-ink); }
 
-  .detail-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; align-items: start; }
+  .detail-grid { display: grid; grid-template-columns: 1.32fr 1fr; gap: 16px; align-items: start; }
   @media (max-width: 900px) { .detail-grid { grid-template-columns: 1fr; } }
 
+  /* ---------- Task table ---------- */
   table.task-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  table.task-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted); padding: 6px 8px; border-bottom: 1px solid var(--gridline); font-weight: 600; }
-  table.task-table td { padding: 8px 8px; border-bottom: 1px solid var(--gridline); vertical-align: middle; color: var(--text-secondary); }
-  table.task-table td.task-name { color: var(--text-primary); font-weight: 500; }
-  .bar-track { position: relative; height: 8px; background: var(--gridline); border-radius: 4px; width: 140px; }
-  .bar-fill { position: absolute; top: 0; left: 0; height: 8px; border-radius: 4px; background: var(--series-1); }
-  .bar-tick { position: absolute; top: -3px; width: 2px; height: 14px; background: var(--text-primary); border-radius: 1px; }
+  table.task-table th {
+    text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--text-muted); padding: 7px 9px; border-bottom: 1px solid var(--gridline); font-weight: 650;
+  }
+  table.task-table td {
+    padding: 10px 9px; border-bottom: 1px solid var(--gridline); vertical-align: middle;
+    color: var(--text-secondary); font-variant-numeric: tabular-nums;
+    transition: background 0.22s var(--ease);
+  }
+  table.task-table tbody tr:hover td { background: var(--series-1-soft); }
+  table.task-table td.task-name { color: var(--text-primary); font-weight: 540; }
+  .bar-track { position: relative; height: 8px; background: var(--gridline); border-radius: 999px; width: 148px; overflow: visible; }
+  .bar-fill {
+    position: absolute; top: 0; left: 0; height: 8px; border-radius: 999px;
+    background: var(--series-1);
+    background: linear-gradient(90deg, var(--series-1), color-mix(in oklab, var(--series-1) 78%, white));
+    width: 0; transition: width 1s var(--ease-out);
+  }
+  .bar-tick { position: absolute; top: -3px; width: 2px; height: 14px; background: var(--text-primary); border-radius: 1px; opacity: 0.72; }
 
-  .risk-item { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+  /* ---------- Risks ---------- */
+  .risk-item {
+    border: 1px solid var(--border); border-radius: 11px; padding: 12px 14px; margin-bottom: 9px;
+    transition: border-color 0.26s var(--ease), background 0.26s var(--ease);
+  }
   .risk-item:last-child { margin-bottom: 0; }
-  .risk-item .risk-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 4px; }
-  .risk-item .risk-desc { font-size: 13px; color: var(--text-primary); }
-  .risk-item .risk-meta { font-size: 11px; color: var(--text-muted); }
+  .risk-item:hover { border-color: var(--border-strong); background: var(--surface-2); }
+  .risk-item .risk-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 5px; }
+  .risk-item .risk-desc { font-size: 13px; color: var(--text-primary); font-weight: 520; line-height: 1.4; }
+  .risk-item .risk-meta { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+  .risk-meter { display: flex; gap: 3px; margin-top: 7px; }
+  .risk-meter i {
+    display: block; width: 15px; height: 3px; border-radius: 999px; background: var(--gridline);
+    transform: scaleX(0); transform-origin: left; transition: transform 0.5s var(--ease-out), background 0.3s var(--ease);
+  }
+  .risk-meter i.on { background: var(--serious); }
+  .risk-meter.lit i { transform: scaleX(1); }
 
-  .narrative-card { border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; background: var(--surface-1); margin-top: 16px; }
-  .narrative-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  /* ---------- Narrative ---------- */
+  .narrative-card { padding: 18px 20px; margin-top: 16px; }
+  .narrative-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
   .ai-badge {
-    font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
-    color: var(--series-1); background: rgba(42,120,214,0.10); border: 1px solid rgba(42,120,214,0.25);
-    padding: 3px 8px; border-radius: 999px;
+    font-size: 9.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--series-1); background: var(--series-1-soft); border: 1px solid rgba(42,120,214,0.24);
+    padding: 4px 10px; border-radius: 999px;
   }
-  .narrative-card p { font-size: 14px; line-height: 1.55; color: var(--text-secondary); margin: 0; }
-  .narrative-toggle { margin-top: 12px; }
+  .ai-status { font-size: 11.5px; color: var(--text-muted); }
+  .ai-status.working::after {
+    content: ""; display: inline-block; width: 6px; height: 6px; margin-left: 7px; border-radius: 50%;
+    background: var(--series-1); animation: blink 1.1s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100% { opacity: 0.25; } 50% { opacity: 1; } }
+  .narrative-card p { font-size: 14px; line-height: 1.62; color: var(--text-secondary); margin: 0; }
+  .narrative-card p.updated { animation: fadeUp 0.5s var(--ease-out) both; }
+  .narrative-controls { display: flex; gap: 18px; margin-top: 14px; flex-wrap: wrap; }
+  .narrative-toggle { margin-top: 14px; }
   .narrative-toggle summary { cursor: pointer; font-size: 12px; color: var(--series-1); }
+  .narrative-toggle summary:focus-visible { outline: 2px solid var(--series-1); outline-offset: 3px; border-radius: 3px; }
   .narrative-toggle pre {
-    margin-top: 10px; background: var(--page-plane); border: 1px solid var(--border); border-radius: 8px;
-    padding: 12px 14px; font-size: 12px; overflow-x: auto; color: var(--text-secondary); line-height: 1.5;
+    margin: 12px 0 0; background: var(--page-plane); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; font-size: 11.5px; overflow-x: auto; color: var(--text-secondary); line-height: 1.6;
+    animation: fadeUp 0.34s var(--ease-out) both;
   }
-  .narrative-controls { display: flex; gap: 14px; margin-top: 12px; }
-  .key-panel { display: none; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+  .key-panel { display: none; gap: 9px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+  .key-panel.open { display: flex; animation: fadeUp 0.34s var(--ease-out) both; }
   .key-panel input {
-    flex: 1; min-width: 220px; font-size: 13px; padding: 7px 10px; border-radius: 6px;
-    border: 1px solid var(--border); background: var(--page-plane); color: var(--text-primary);
-    font-family: ui-monospace, monospace;
+    flex: 1; min-width: 220px; font-size: 13px; padding: 9px 12px; border-radius: 9px;
+    border: 1px solid var(--border-strong); background: var(--page-plane); color: var(--text-primary);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    transition: border-color 0.24s var(--ease), box-shadow 0.24s var(--ease);
+  }
+  .key-panel input:focus {
+    outline: none; border-color: var(--series-1);
+    box-shadow: 0 0 0 3px var(--series-1-soft);
   }
   .key-panel button {
-    font-size: 12px; padding: 7px 12px; border-radius: 6px; border: 1px solid var(--border);
-    background: var(--surface-1); color: var(--text-primary); cursor: pointer;
+    font-size: 12px; font-weight: 560; padding: 9px 15px; border-radius: 9px;
+    border: 1px solid var(--border-strong); background: var(--surface-2); color: var(--text-primary);
+    cursor: pointer; font-family: inherit;
+    transition: transform 0.22s var(--ease), box-shadow 0.22s var(--ease), background 0.22s var(--ease);
   }
-  .key-note { flex-basis: 100%; font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+  .key-panel button:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+  .key-note { flex-basis: 100%; font-size: 11px; color: var(--text-muted); line-height: 1.55; }
 
-  .dq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  /* ---------- Data quality ---------- */
+  .dq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   @media (max-width: 900px) { .dq-grid { grid-template-columns: 1fr; } }
-  .dq-card h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); margin: 0 0 10px; }
-  table.dq-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  table.dq-table th, table.dq-table td { text-align: left; padding: 6px 7px; border-bottom: 1px solid var(--gridline); }
-  table.dq-table th { color: var(--text-muted); font-weight: 600; font-size: 11px; }
-  table.dq-table td { color: var(--text-secondary); }
-  table.dq-table td.flag { font-size: 10px; color: var(--critical); }
-  table.dq-table td.fixed { font-size: 10px; color: var(--good); }
-  .dq-note { font-size: 12px; color: var(--text-muted); margin-top: 10px; line-height: 1.5; }
+  .dq-card h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin: 0 0 12px; font-weight: 650; }
+  .dq-scroll { overflow-x: auto; }
+  table.dq-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  table.dq-table th, table.dq-table td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--gridline); white-space: nowrap; }
+  table.dq-table th { color: var(--text-muted); font-weight: 650; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; }
+  table.dq-table td { color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  table.dq-table tbody tr { transition: background 0.22s var(--ease); }
+  table.dq-table tbody tr:hover { background: var(--series-1-soft); }
+  table.dq-table td.flag  { font-size: 10px; color: var(--critical-ink); font-weight: 560; }
+  table.dq-table td.fixed { font-size: 10px; color: var(--good-ink);     font-weight: 560; }
+  .dq-note { font-size: 12.5px; color: var(--text-muted); margin: 18px 0 0; line-height: 1.65; max-width: 78ch; }
 
-  footer { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 40px; font-size: 12px; color: var(--text-muted); line-height: 1.6; }
-  footer a { color: var(--series-1); }
-
-  .tooltip {
-    position: absolute; pointer-events: none; background: var(--text-primary); color: var(--page-plane);
-    font-size: 11px; padding: 6px 9px; border-radius: 6px; white-space: nowrap; opacity: 0; transition: opacity 0.08s;
-    transform: translate(-50%, -110%); z-index: 5;
+  footer {
+    border-top: 1px solid var(--border); padding-top: 24px; margin-top: 48px;
+    font-size: 12px; color: var(--text-muted); line-height: 1.7; max-width: 88ch;
   }
+  footer strong { color: var(--text-secondary); }
+
+  /* ---------- Tooltip ---------- */
+  .tooltip {
+    position: absolute; pointer-events: none; background: var(--text-primary); color: var(--surface-1);
+    font-size: 11px; padding: 8px 11px; border-radius: 8px; white-space: nowrap;
+    opacity: 0; transition: opacity 0.14s var(--ease), transform 0.14s var(--ease);
+    transform: translate(-50%, -108%) scale(0.96); z-index: 5; line-height: 1.5;
+    box-shadow: var(--shadow-lg); font-variant-numeric: tabular-nums;
+  }
+  .tooltip.show { opacity: 1; transform: translate(-50%, -112%) scale(1); }
   .chart-svg-wrap { position: relative; }
+
+  /* ---------- SVG animation hooks ---------- */
+  .spi-bar .bar-shape {
+    transform: scaleY(0); transform-box: fill-box; transform-origin: bottom;
+    transition: transform 0.85s var(--ease-out), filter 0.25s var(--ease);
+  }
+  .spi-chart.lit .spi-bar .bar-shape { transform: scaleY(1); }
+  .spi-bar:hover .bar-shape { filter: brightness(1.09); }
+  .spi-bar .bar-label { opacity: 0; transition: opacity 0.4s var(--ease) 0.5s; }
+  .spi-chart.lit .spi-bar .bar-label { opacity: 1; }
+
+  .draw-line { transition: stroke-dashoffset 1.15s var(--ease-out); }
+  .area-fill { opacity: 0; transition: opacity 0.7s var(--ease) 0.35s; }
+  .scurve.lit .area-fill { opacity: 1; }
+  .endpoint { opacity: 0; transform-box: fill-box; transform-origin: center; transition: opacity 0.4s var(--ease) 0.95s; }
+  .scurve.lit .endpoint { opacity: 1; }
+  .endpoint-halo { animation: haloPulse 2.8s var(--ease-out) infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes haloPulse {
+    0%   { transform: scale(0.7); opacity: 0.5; }
+    70%  { transform: scale(2.1); opacity: 0; }
+    100% { transform: scale(2.1); opacity: 0; }
+  }
+
+  /* ---------- Reveal on scroll ---------- */
+  .reveal { opacity: 0; transform: translateY(16px); }
+  .reveal.in {
+    opacity: 1; transform: none;
+    transition: opacity 0.62s var(--ease-out), transform 0.62s var(--ease-out);
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .stagger > * { animation: fadeUp 0.55s var(--ease-out) both; }
+  .stagger > *:nth-child(1) { animation-delay: 0.02s; }
+  .stagger > *:nth-child(2) { animation-delay: 0.09s; }
+  .stagger > *:nth-child(3) { animation-delay: 0.16s; }
+  .stagger > *:nth-child(4) { animation-delay: 0.23s; }
+  .stagger > *:nth-child(5) { animation-delay: 0.30s; }
+  .stagger > *:nth-child(6) { animation-delay: 0.37s; }
 
   @media (max-width: 700px) {
     .tile-row, .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    header.top h1 { font-size: 24px; }
+    .wrap { padding: 28px 18px 64px; }
+  }
+
+  /* ---------- Reduced motion ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+    .reveal { opacity: 1; transform: none; }
+    .spi-bar .bar-shape { transform: scaleY(1); }
+    .spi-bar .bar-label, .area-fill, .endpoint { opacity: 1; }
+    .risk-meter i { transform: scaleX(1); }
   }
 </style>
 </head>
@@ -228,30 +438,31 @@
 
   <header class="top">
     <div>
+      <div class="eyebrow">Project Controls Reporting</div>
       <h1>Capital Projects Portfolio Dashboard</h1>
       <p>Executive &amp; project-level reporting · Snapshot as of Aug 1, 2026</p>
     </div>
     <span class="portfolio-badge">Portfolio demo project</span>
   </header>
 
-  <section>
+  <section class="reveal">
     <h2 class="section-title">Portfolio Summary</h2>
-    <div class="tile-row" id="tileRow"></div>
+    <div class="tile-row stagger" id="tileRow"></div>
   </section>
 
-  <section>
+  <section class="reveal">
     <h2 class="section-title">Schedule Performance by Project</h2>
     <div class="chart-card">
       <div class="chart-head">
         <div>
           <div class="chart-title">Schedule Performance Index (SPI)</div>
-          <div class="legend" style="margin-top:6px;">
+          <div class="legend" style="margin-top:8px;">
             <span class="item"><span class="swatch dot" style="background:var(--good)"></span>On track (SPI ≥ 0.95)</span>
             <span class="item"><span class="swatch dot" style="background:var(--warning)"></span>At risk (0.85–0.95)</span>
             <span class="item"><span class="swatch dot" style="background:var(--critical)"></span>Behind (&lt; 0.85)</span>
           </div>
         </div>
-        <button class="table-toggle" id="spiTableToggle">View as table</button>
+        <button class="link-btn" id="spiTableToggle">View as table</button>
       </div>
       <div class="chart-svg-wrap" id="spiChartWrap"></div>
       <table class="sr-table" id="spiTable">
@@ -261,40 +472,44 @@
     </div>
   </section>
 
-  <section>
+  <section class="reveal">
     <h2 class="section-title">Project Detail</h2>
     <div class="tabs" id="tabRow"></div>
     <div id="projectDetail"></div>
   </section>
 
-  <section>
+  <section class="reveal">
     <h2 class="section-title">Data Quality — Field Report Cleaning Example</h2>
     <div class="card">
       <div class="dq-grid">
         <div class="dq-card">
           <h4>Raw daily field reports (before)</h4>
-          <table class="dq-table">
-            <thead><tr><th>Date</th><th>Task</th><th>Hours</th><th>Crew</th><th>Cost</th><th>% Complete</th></tr></thead>
-            <tbody>
-              <tr><td>2026-03-04</td><td>MEP Rough-In</td><td>8h</td><td>6</td><td>$4,200</td><td>78%</td></tr>
-              <tr><td>03/05/2026</td><td>mep rough in</td><td>480m</td><td>6</td><td>4200.00</td><td>78</td></tr>
-              <tr><td>2026-3-6</td><td>MEP Rough-In</td><td>0.5 day</td><td>5</td><td>$2,100</td><td>82%</td></tr>
-              <tr><td>2026-03-06</td><td>MEP Rough-In</td><td>8</td><td>5</td><td>$2,100</td><td>82%</td></tr>
-              <tr><td>2026-03-07</td><td>MEP Rough-In</td><td>8h</td><td>6</td><td>$4,150</td><td>130%</td></tr>
-            </tbody>
-          </table>
+          <div class="dq-scroll">
+            <table class="dq-table">
+              <thead><tr><th>Date</th><th>Task</th><th>Hours</th><th>Crew</th><th>Cost</th><th>% Complete</th></tr></thead>
+              <tbody>
+                <tr><td>2026-03-04</td><td>MEP Rough-In</td><td>8h</td><td>6</td><td>$4,200</td><td>78%</td></tr>
+                <tr><td>03/05/2026</td><td>mep rough in</td><td>480m</td><td>6</td><td>4200.00</td><td>78</td></tr>
+                <tr><td>2026-3-6</td><td>MEP Rough-In</td><td>0.5 day</td><td>5</td><td>$2,100</td><td>82%</td></tr>
+                <tr><td>2026-03-06</td><td>MEP Rough-In</td><td>8</td><td>5</td><td>$2,100</td><td>82%</td></tr>
+                <tr><td>2026-03-07</td><td>MEP Rough-In</td><td>8h</td><td>6</td><td>$4,150</td><td>130%</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
         <div class="dq-card">
           <h4>Standardized output (after)</h4>
-          <table class="dq-table">
-            <thead><tr><th>Date</th><th>Task</th><th>Hours</th><th>Crew</th><th>Cost</th><th>% Complete</th><th>Flag</th></tr></thead>
-            <tbody>
-              <tr><td>2026-03-04</td><td>MEP Rough-In</td><td>8.0</td><td>6</td><td>$4,200</td><td>78%</td><td class="fixed">—</td></tr>
-              <tr><td>2026-03-05</td><td>MEP Rough-In</td><td>8.0</td><td>6</td><td>$4,200</td><td>78%</td><td class="fixed">Format normalized</td></tr>
-              <tr><td>2026-03-06</td><td>MEP Rough-In</td><td>4.0</td><td>5</td><td>$2,100</td><td>82%</td><td class="fixed">Duplicate removed</td></tr>
-              <tr><td>2026-03-07</td><td>MEP Rough-In</td><td>8.0</td><td>6</td><td>$4,150</td><td>100%</td><td class="flag">Capped — impossible value</td></tr>
-            </tbody>
-          </table>
+          <div class="dq-scroll">
+            <table class="dq-table">
+              <thead><tr><th>Date</th><th>Task</th><th>Hours</th><th>Crew</th><th>Cost</th><th>% Complete</th><th>Flag</th></tr></thead>
+              <tbody>
+                <tr><td>2026-03-04</td><td>MEP Rough-In</td><td>8.0</td><td>6</td><td>$4,200</td><td>78%</td><td class="fixed">—</td></tr>
+                <tr><td>2026-03-05</td><td>MEP Rough-In</td><td>8.0</td><td>6</td><td>$4,200</td><td>78%</td><td class="fixed">Format normalized</td></tr>
+                <tr><td>2026-03-06</td><td>MEP Rough-In</td><td>4.0</td><td>5</td><td>$2,100</td><td>82%</td><td class="fixed">Duplicate removed</td></tr>
+                <tr><td>2026-03-07</td><td>MEP Rough-In</td><td>8.0</td><td>6</td><td>$4,150</td><td>100%</td><td class="flag">Capped — impossible value</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
       <p class="dq-note">Every reporting cycle, source field reports arrive with inconsistent time units (hours/minutes/day-fractions), mixed date formats, near-duplicate entries, and occasional out-of-range values. Before data reaches a dashboard, it's parsed into standard units, deduplicated against existing records, and range-checked — with anything outside plausible bounds flagged for review rather than silently accepted.</p>
@@ -309,15 +524,31 @@
 </div>
 
 <script>
-const fmtMoney = n => '$' + Math.round(n).toLocaleString('en-US');
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const fmtMoney  = n => '$' + Math.round(n).toLocaleString('en-US');
 const fmtMoneyK = n => (n >= 0 ? '+' : '−') + '$' + Math.abs(Math.round(n)).toLocaleString('en-US');
-const fmtPct = n => (n * 100).toFixed(0) + '%';
 
 function sCurve(t) { return t * t * (3 - 2 * t); }
 function sample(n, target) {
   const out = [];
   for (let i = 0; i < n; i++) out.push(target * sCurve(i / (n - 1)));
   return out;
+}
+function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+/* Count-up animation for numeric values */
+function animateValue(el, target, format, duration) {
+  if (REDUCED) { el.textContent = format(target); return; }
+  const start = performance.now();
+  const d = duration || 950;
+  function step(now) {
+    const t = Math.min(1, (now - start) / d);
+    el.textContent = format(target * easeOutCubic(t));
+    if (t < 1) requestAnimationFrame(step);
+    else el.textContent = format(target);
+  }
+  requestAnimationFrame(step);
 }
 
 const STATUS = {
@@ -341,7 +572,7 @@ const projects = [
     id: 'riverside', name: 'Riverside Medical Center – Phase 2', short: 'Riverside Medical',
     client: 'Meridian Health Systems', type: 'Healthcare / Life Sciences', region: 'Austin, TX',
     budget: 18400000, plannedPct: 0.68, actualPct: 0.71, actualCost: 12810000,
-    scheduleVarianceDays: 4, status: 'good', months: 9,
+    scheduleVarianceDays: 4, months: 9,
     start: 'Feb 2025', end: 'Nov 2026', completed: false,
     tasks: [
       { name: 'Sitework & Foundation', planned: 1.00, actual: 1.00 },
@@ -361,7 +592,7 @@ const projects = [
     id: 'harborview', name: 'Harborview Logistics Facility', short: 'Harborview Logistics',
     client: 'Coastal Distribution Group', type: 'Industrial / Warehouse', region: 'Savannah, GA',
     budget: 9200000, plannedPct: 0.82, actualPct: 0.76, actualCost: 7210000,
-    scheduleVarianceDays: -9, status: 'warning', months: 8,
+    scheduleVarianceDays: -9, months: 8,
     start: 'Jan 2025', end: 'Dec 2026', completed: false,
     tasks: [
       { name: 'Sitework', planned: 1.00, actual: 1.00 },
@@ -381,7 +612,7 @@ const projects = [
     id: 'cedarridge', name: 'Cedar Ridge Office Park – Building 3', short: 'Cedar Ridge Office',
     client: 'Cedar Ridge Development LLC', type: 'Commercial Office', region: 'Denver, CO',
     budget: 6750000, plannedPct: 0.88, actualPct: 0.74, actualCost: 5610000,
-    scheduleVarianceDays: -21, status: 'serious', months: 10,
+    scheduleVarianceDays: -21, months: 10,
     start: 'Sep 2024', end: 'Oct 2026', completed: false,
     tasks: [
       { name: 'Foundation', planned: 1.00, actual: 1.00 },
@@ -401,7 +632,7 @@ const projects = [
     id: 'meridian', name: 'Meridian Data Center – Building C', short: 'Meridian Data Center',
     client: 'NimbusCloud Infrastructure', type: 'Mission Critical / Data Center', region: 'Ashburn, VA',
     budget: 24100000, plannedPct: 1.00, actualPct: 1.00, actualCost: 23630000,
-    scheduleVarianceDays: 2, status: 'complete', months: 16,
+    scheduleVarianceDays: 2, months: 16,
     start: 'Mar 2024', end: 'Jun 2025', completed: true,
     tasks: [
       { name: 'Sitework & Foundation', planned: 1.00, actual: 1.00 },
@@ -428,9 +659,11 @@ projects.forEach(p => { p.status = statusOf(p.spi, p.completed); });
 
 function statusPill(statusKey) {
   const s = STATUS[statusKey];
-  return `<span class="status-pill ${s.class}"><span class="dot" style="background:${s.color}"></span>${s.label}</span>`;
+  const alert = (statusKey === 'warning' || statusKey === 'serious') ? ' alert' : '';
+  return `<span class="status-pill ${s.class}${alert}"><span class="dot" style="background:${s.color}"></span>${s.label}</span>`;
 }
 
+/* ---------- Portfolio tiles ---------- */
 function renderTiles() {
   const totalBudget = projects.reduce((s, p) => s + p.budget, 0);
   const totalEv = projects.reduce((s, p) => s + p.ev, 0);
@@ -441,40 +674,48 @@ function renderTiles() {
   const atRisk = projects.filter(p => p.status === 'warning' || p.status === 'serious').length;
 
   const tiles = [
-    { label: 'Total Portfolio Value', value: fmtMoney(totalBudget), sub: `${projects.length} active/closed projects` },
-    { label: 'Portfolio SPI', value: weightedSpi.toFixed(2), sub: weightedSpi >= 0.95 ? 'On track overall' : 'Behind plan overall' },
-    { label: 'Portfolio CPI', value: weightedCpi.toFixed(2), sub: weightedCpi >= 1 ? 'Under budget overall' : 'Over budget overall' },
-    { label: 'Projects At Risk', value: atRisk, sub: 'SPI below 0.95' }
+    { label: 'Total Portfolio Value', raw: totalBudget, fmt: fmtMoney,           sub: `${projects.length} active/closed projects` },
+    { label: 'Portfolio SPI',         raw: weightedSpi, fmt: n => n.toFixed(2),  sub: weightedSpi >= 0.95 ? 'On track overall' : 'Behind plan overall' },
+    { label: 'Portfolio CPI',         raw: weightedCpi, fmt: n => n.toFixed(2),  sub: weightedCpi >= 1 ? 'Under budget overall' : 'Over budget overall' },
+    { label: 'Projects At Risk',      raw: atRisk,      fmt: n => String(Math.round(n)), sub: 'SPI below 0.95' }
   ];
-  document.getElementById('tileRow').innerHTML = tiles.map(t => `
+
+  document.getElementById('tileRow').innerHTML = tiles.map((t, i) => `
     <div class="tile">
       <div class="label">${t.label}</div>
-      <div class="value">${t.value}</div>
+      <div class="value" data-tile="${i}">${t.fmt(0)}</div>
       <div class="sub">${t.sub}</div>
     </div>
   `).join('');
+
+  tiles.forEach((t, i) => {
+    const el = document.querySelector(`[data-tile="${i}"]`);
+    setTimeout(() => animateValue(el, t.raw, t.fmt, 1000), 180 + i * 90);
+  });
 }
 
 function statusHex(key) {
   return { good: '#0ca30c', warning: '#b9790a', serious: '#c9622f', complete: '#0ca30c' }[key];
 }
 
+/* ---------- SPI bar chart ---------- */
 function renderSpiChart() {
-  const w = 1100, h = 220, padL = 40, padR = 20, padT = 16, padB = 34;
+  const w = 1100, h = 240, padL = 44, padR = 20, padT = 20, padB = 38;
   const plotW = w - padL - padR, plotH = h - padT - padB;
   const maxVal = 1.2;
-  const barGap = 40;
+  const barGap = 44;
   const barW = (plotW - barGap * (projects.length - 1)) / projects.length;
 
   const yTicks = [0, 0.3, 0.6, 0.9, 1.2];
   let gridSvg = yTicks.map(v => {
     const y = padT + plotH - (v / maxVal) * plotH;
     return `<line x1="${padL}" y1="${y}" x2="${w - padR}" y2="${y}" stroke="var(--gridline)" stroke-width="1"/>
-            <text x="${padL - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="var(--text-muted)">${v.toFixed(1)}</text>`;
+            <text x="${padL - 10}" y="${y + 4}" text-anchor="end" font-size="11" fill="var(--text-muted)">${v.toFixed(1)}</text>`;
   }).join('');
 
   const targetY = padT + plotH - (0.95 / maxVal) * plotH;
-  gridSvg += `<line x1="${padL}" y1="${targetY}" x2="${w - padR}" y2="${targetY}" stroke="var(--baseline)" stroke-width="1" stroke-dasharray="3,4"/>`;
+  gridSvg += `<line x1="${padL}" y1="${targetY}" x2="${w - padR}" y2="${targetY}" stroke="var(--baseline)" stroke-width="1.5" stroke-dasharray="4,5"/>
+              <text x="${w - padR}" y="${targetY - 7}" text-anchor="end" font-size="10" fill="var(--text-muted)">Target 0.95</text>`;
 
   let bars = '';
   projects.forEach((p, i) => {
@@ -485,18 +726,19 @@ function renderSpiChart() {
     bars += `
       <g class="spi-bar" data-i="${i}" style="cursor:pointer">
         <rect x="${x}" y="${padT}" width="${barW}" height="${plotH}" fill="transparent"/>
-        <rect x="${x}" y="${y}" width="${barW}" height="${barH}" rx="4" fill="${color}"/>
-        <text x="${x + barW / 2}" y="${y - 8}" text-anchor="middle" font-size="13" font-weight="600" fill="var(--text-primary)">${p.spi.toFixed(2)}</text>
-        <text x="${x + barW / 2}" y="${h - 10}" text-anchor="middle" font-size="11" fill="var(--text-secondary)">${p.short}</text>
+        <rect class="bar-shape" x="${x}" y="${y}" width="${barW}" height="${barH}" rx="6" fill="${color}"
+              style="transition-delay:${i * 90}ms"/>
+        <text class="bar-label" x="${x + barW / 2}" y="${y - 10}" text-anchor="middle" font-size="14"
+              font-weight="650" fill="var(--text-primary)" style="transition-delay:${500 + i * 90}ms">${p.spi.toFixed(2)}</text>
+        <text x="${x + barW / 2}" y="${h - 12}" text-anchor="middle" font-size="11.5" fill="var(--text-secondary)">${p.short}</text>
       </g>`;
   });
 
-  const svg = `<svg viewBox="0 0 ${w} ${h}" width="100%" style="display:block;font-family:inherit;">
-    ${gridSvg}
-    ${bars}
-  </svg>
-  <div class="tooltip" id="spiTooltip"></div>`;
-  document.getElementById('spiChartWrap').innerHTML = svg;
+  document.getElementById('spiChartWrap').innerHTML =
+    `<svg class="spi-chart" viewBox="0 0 ${w} ${h}" width="100%" style="display:block;font-family:inherit;overflow:visible;">
+      ${gridSvg}${bars}
+    </svg>
+    <div class="tooltip" id="spiTooltip"></div>`;
 
   const tooltip = document.getElementById('spiTooltip');
   document.querySelectorAll('.spi-bar').forEach(g => {
@@ -505,22 +747,29 @@ function renderSpiChart() {
       const rect = g.closest('.chart-svg-wrap').getBoundingClientRect();
       tooltip.style.left = (e.clientX - rect.left) + 'px';
       tooltip.style.top = (e.clientY - rect.top) + 'px';
-      tooltip.style.opacity = 1;
+      tooltip.classList.add('show');
       tooltip.innerHTML = `<strong>${p.name}</strong><br>SPI ${p.spi.toFixed(2)} · ${STATUS[p.status].label}`;
     });
-    g.addEventListener('mouseleave', () => { tooltip.style.opacity = 0; });
+    g.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
   });
 
   document.getElementById('spiTableBody').innerHTML = projects.map(p =>
     `<tr><td>${p.name}</td><td>${p.spi.toFixed(2)}</td><td>${STATUS[p.status].label}</td></tr>`
   ).join('');
+
+  const chart = document.querySelector('.spi-chart');
+  requestAnimationFrame(() => requestAnimationFrame(() => chart.classList.add('lit')));
 }
-document.getElementById('spiTableToggle').addEventListener('click', () => {
-  document.getElementById('spiTable').classList.toggle('show');
+
+document.getElementById('spiTableToggle').addEventListener('click', (e) => {
+  const t = document.getElementById('spiTable');
+  t.classList.toggle('show');
+  e.currentTarget.textContent = t.classList.contains('show') ? 'Hide table' : 'View as table';
 });
 
+/* ---------- Planned vs actual S-curve ---------- */
 function renderScurve(p) {
-  const w = 700, h = 260, padL = 56, padR = 20, padT = 16, padB = 30;
+  const w = 700, h = 268, padL = 58, padR = 22, padT = 18, padB = 32;
   const plotW = w - padL - padR, plotH = h - padT - padB;
   const n = 9;
   const planned = sample(n, p.budget);
@@ -538,32 +787,67 @@ function renderScurve(p) {
     const v = (maxVal / yTicks) * i;
     const y = yAt(v);
     gridSvg += `<line x1="${padL}" y1="${y}" x2="${w - padR}" y2="${y}" stroke="var(--gridline)" stroke-width="1"/>
-                <text x="${padL - 8}" y="${y + 4}" text-anchor="end" font-size="10" fill="var(--text-muted)">${fmtAxis(v)}</text>`;
+                <text x="${padL - 10}" y="${y + 4}" text-anchor="end" font-size="10" fill="var(--text-muted)">${fmtAxis(v)}</text>`;
   }
 
   const plannedPath = planned.map((v, i) => `${i === 0 ? 'M' : 'L'} ${xAt(i)} ${yAt(v)}`).join(' ');
-  const actualPath = actual.map((v, i) => `${i === 0 ? 'M' : 'L'} ${xAt(i)} ${yAt(v)}`).join(' ');
+  const actualPath  = actual.map((v, i)  => `${i === 0 ? 'M' : 'L'} ${xAt(i)} ${yAt(v)}`).join(' ');
+  const areaPath = actualPath + ` L ${xAt(actualN - 1)} ${padT + plotH} L ${xAt(0)} ${padT + plotH} Z`;
 
   let todayLine = '';
   if (!p.completed) {
     const tx = xAt(actualN - 1);
-    todayLine = `<line x1="${tx}" y1="${padT}" x2="${tx}" y2="${padT + plotH}" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="2,3"/>
-                 <text x="${tx}" y="${padT - 4}" text-anchor="middle" font-size="10" fill="var(--text-muted)">Today</text>`;
+    todayLine = `<line x1="${tx}" y1="${padT}" x2="${tx}" y2="${padT + plotH}" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="2,4"/>
+                 <text x="${tx}" y="${padT - 5}" text-anchor="middle" font-size="10" fill="var(--text-muted)">Today</text>`;
   }
 
-  const dots = actual.map((v, i) => `<circle cx="${xAt(i)}" cy="${yAt(v)}" r="0" class="pt-actual"/>`).join('');
+  const ex = xAt(actualN - 1), ey = yAt(actual[actualN - 1]);
+  const gid = 'grad-' + p.id;
 
-  const svg = `<svg viewBox="0 0 ${w} ${h}" width="100%" style="display:block;font-family:inherit;" id="scurve-${p.id}">
+  const svg = `<svg class="scurve" viewBox="0 0 ${w} ${h}" width="100%" style="display:block;font-family:inherit;overflow:visible;">
+    <defs>
+      <linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="var(--series-1)" stop-opacity="0.22"/>
+        <stop offset="100%" stop-color="var(--series-1)" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
     ${gridSvg}
     ${todayLine}
-    <path d="${plannedPath}" fill="none" stroke="var(--series-planned)" stroke-width="2" stroke-dasharray="5,4"/>
-    <path d="${actualPath}" fill="none" stroke="var(--series-1)" stroke-width="2"/>
+    <path class="area-fill" d="${areaPath}" fill="url(#${gid})"/>
+    <path class="draw-line planned-line" d="${plannedPath}" fill="none" stroke="var(--series-planned)"
+          stroke-width="2" stroke-dasharray="5,4" stroke-linecap="round"/>
+    <path class="draw-line actual-line" d="${actualPath}" fill="none" stroke="var(--series-1)"
+          stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <g class="endpoint">
+      <circle class="endpoint-halo" cx="${ex}" cy="${ey}" r="5" fill="var(--series-1)" opacity="0.32"/>
+      <circle cx="${ex}" cy="${ey}" r="4.5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/>
+    </g>
     <g id="hoverlayer-${p.id}"></g>
     <rect x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" fill="transparent" id="hoverzone-${p.id}"/>
   </svg>
   <div class="tooltip" id="tooltip-${p.id}"></div>`;
 
-  return { svg, meta: { planned, actual, actualN, n, padL, plotW, xAt, yAt } };
+  return { svg, meta: { planned, actual, actualN, n, padL, plotW, xAt, yAt, padT, plotH } };
+}
+
+function animateScurve() {
+  const svg = document.querySelector('#scurveWrap .scurve');
+  if (!svg) return;
+  svg.querySelectorAll('.draw-line').forEach((path, i) => {
+    const len = path.getTotalLength();
+    path.style.strokeDasharray = path.classList.contains('planned-line') ? `5 4` : `${len}`;
+    if (!path.classList.contains('planned-line')) {
+      path.style.strokeDashoffset = len;
+      path.style.transitionDelay = (i * 120) + 'ms';
+      requestAnimationFrame(() => requestAnimationFrame(() => { path.style.strokeDashoffset = '0'; }));
+    } else {
+      // dashed planned line: fade in rather than draw, to keep the dash pattern intact
+      path.style.opacity = '0';
+      path.style.transition = 'opacity 0.7s var(--ease-out)';
+      requestAnimationFrame(() => requestAnimationFrame(() => { path.style.opacity = '1'; }));
+    }
+  });
+  requestAnimationFrame(() => requestAnimationFrame(() => svg.classList.add('lit')));
 }
 
 function wireScurveHover(p, meta) {
@@ -582,23 +866,24 @@ function wireScurveHover(p, meta) {
     idx = Math.max(0, Math.min(meta.n - 1, idx));
     const hasActual = idx < meta.actualN;
     const px = meta.xAt(idx);
-    let dots = `<line x1="${px}" y1="16" x2="${px}" y2="230" stroke="var(--baseline)" stroke-width="1"/>`;
-    dots += `<circle cx="${px}" cy="${meta.yAt(meta.planned[idx])}" r="4" fill="var(--series-planned)"/>`;
-    if (hasActual) dots += `<circle cx="${px}" cy="${meta.yAt(meta.actual[idx])}" r="4" fill="var(--series-1)"/>`;
-    layer.innerHTML = dots;
+    let marks = `<line x1="${px}" y1="${meta.padT}" x2="${px}" y2="${meta.padT + meta.plotH}" stroke="var(--baseline)" stroke-width="1"/>`;
+    marks += `<circle cx="${px}" cy="${meta.yAt(meta.planned[idx])}" r="4.5" fill="var(--series-planned)" stroke="var(--surface-1)" stroke-width="2"/>`;
+    if (hasActual) marks += `<circle cx="${px}" cy="${meta.yAt(meta.actual[idx])}" r="4.5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/>`;
+    layer.innerHTML = marks;
 
     const rect = zone.closest('.chart-svg-wrap').getBoundingClientRect();
     tooltip.style.left = (e.clientX - rect.left) + 'px';
     tooltip.style.top = (e.clientY - rect.top) + 'px';
-    tooltip.style.opacity = 1;
+    tooltip.classList.add('show');
     tooltip.innerHTML = `Planned: ${fmtMoney(meta.planned[idx])}` + (hasActual ? `<br>Actual: ${fmtMoney(meta.actual[idx])}` : '<br>Actual: not yet reported');
   });
   zone.addEventListener('mouseleave', () => {
     layer.innerHTML = '';
-    tooltip.style.opacity = 0;
+    tooltip.classList.remove('show');
   });
 }
 
+/* ---------- Tabs ---------- */
 let activeProjectId = projects[0].id;
 
 function renderTabs() {
@@ -607,16 +892,23 @@ function renderTabs() {
   ).join('');
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+      if (btn.dataset.id === activeProjectId) return;
       activeProjectId = btn.dataset.id;
-      renderTabs();
-      renderDetail();
+      const panel = document.getElementById('projectDetail');
+      panel.classList.add('swapping');
+      setTimeout(() => {
+        renderTabs();
+        renderDetail();
+        panel.classList.remove('swapping');
+      }, REDUCED ? 0 : 190);
     });
   });
 }
 
+/* ---------- Project detail ---------- */
 function renderDetail() {
   const p = projects.find(x => x.id === activeProjectId);
-  const kpiValClass = (good) => good ? 'good' : 'bad';
+  const kpiValClass = good => good ? 'good' : 'bad';
 
   const taskRows = p.tasks.map(t => {
     const pct = Math.round(t.actual * 100);
@@ -625,8 +917,8 @@ function renderDetail() {
       <td class="task-name">${t.name}</td>
       <td>
         <div class="bar-track">
-          <div class="bar-fill" style="width:${Math.min(pct,100)}%"></div>
-          <div class="bar-tick" style="left:${Math.min(plannedPct,100)}%"></div>
+          <div class="bar-fill" data-w="${Math.min(pct, 100)}"></div>
+          <div class="bar-tick" style="left:${Math.min(plannedPct, 100)}%"></div>
         </div>
       </td>
       <td>${pct}%</td>
@@ -634,15 +926,20 @@ function renderDetail() {
     </tr>`;
   }).join('');
 
-  const riskRows = p.risks.length ? p.risks.map(r => `
+  const riskRows = p.risks.length ? p.risks.map(r => {
+    const sev = Math.round((r.likelihood + r.impact) / 2);
+    const meter = Array.from({ length: 5 }, (_, i) =>
+      `<i class="${i < sev ? 'on' : ''}" style="transition-delay:${i * 55}ms"></i>`).join('');
+    return `
     <div class="risk-item">
       <div class="risk-top">
         <span class="risk-desc">${r.desc}</span>
         <span class="risk-meta">${r.status}</span>
       </div>
       <div class="risk-meta">Likelihood ${r.likelihood}/5 · Impact ${r.impact}/5</div>
-    </div>
-  `).join('') : `<div class="risk-meta">No open risks.</div>`;
+      <div class="risk-meter">${meter}</div>
+    </div>`;
+  }).join('') : `<div class="risk-meta">No open risks at closeout.</div>`;
 
   const apiSnippet = `// This is the exact call the "Generate live insight" button makes below.
 // The API key comes from localStorage — entered by you at runtime, never
@@ -663,6 +960,13 @@ fetch('https://api.anthropic.com/v1/messages', {
   })
 })`;
 
+  const kpis = [
+    { label: 'Schedule Performance (SPI)', raw: p.spi, fmt: n => n.toFixed(2), good: p.spi >= 0.95 },
+    { label: 'Cost Performance (CPI)',     raw: p.cpi, fmt: n => n.toFixed(2), good: p.cpi >= 1 },
+    { label: 'Schedule Variance',          raw: p.scheduleVarianceDays, fmt: n => (n >= 0 ? '+' : '') + Math.round(n) + 'd', good: p.scheduleVarianceDays >= 0 },
+    { label: 'Budget Variance',            raw: p.budgetVariance, fmt: fmtMoneyK, good: p.budgetVariance >= 0 }
+  ];
+
   document.getElementById('projectDetail').innerHTML = `
     <div class="project-header">
       <div>
@@ -672,23 +976,12 @@ fetch('https://api.anthropic.com/v1/messages', {
       ${statusPill(p.status)}
     </div>
 
-    <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-label">Schedule Performance (SPI)</div>
-        <div class="kpi-value ${kpiValClass(p.spi >= 0.95)}">${p.spi.toFixed(2)}</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Cost Performance (CPI)</div>
-        <div class="kpi-value ${kpiValClass(p.cpi >= 1)}">${p.cpi.toFixed(2)}</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Schedule Variance</div>
-        <div class="kpi-value ${kpiValClass(p.scheduleVarianceDays >= 0)}">${p.scheduleVarianceDays >= 0 ? '+' : ''}${p.scheduleVarianceDays}d</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Budget Variance</div>
-        <div class="kpi-value ${kpiValClass(p.budgetVariance >= 0)}">${fmtMoneyK(p.budgetVariance)}</div>
-      </div>
+    <div class="kpi-grid stagger">
+      ${kpis.map((k, i) => `
+        <div class="kpi-card">
+          <div class="kpi-label">${k.label}</div>
+          <div class="kpi-value ${kpiValClass(k.good)}" data-kpi="${i}">${k.fmt(0)}</div>
+        </div>`).join('')}
     </div>
 
     <div class="detail-grid">
@@ -704,13 +997,13 @@ fetch('https://api.anthropic.com/v1/messages', {
       </div>
 
       <div class="card">
-        <div class="chart-title" style="margin-bottom:10px;">Open Risks</div>
+        <div class="chart-title" style="margin-bottom:12px;">Open Risks</div>
         ${riskRows}
       </div>
     </div>
 
     <div class="chart-card" style="margin-top:16px;">
-      <div class="chart-title" style="margin-bottom:10px;">Task Progress</div>
+      <div class="chart-title" style="margin-bottom:12px;">Task Progress</div>
       <table class="task-table">
         <thead><tr><th>Task</th><th>Progress</th><th>Actual</th><th>Planned</th></tr></thead>
         <tbody>${taskRows}</tbody>
@@ -720,15 +1013,15 @@ fetch('https://api.anthropic.com/v1/messages', {
     <div class="narrative-card">
       <div class="narrative-head">
         <span class="ai-badge">AI-generated insight</span>
-        <span class="risk-meta" id="aiStatus">Static example</span>
+        <span class="ai-status" id="aiStatus">Static example</span>
       </div>
       <p id="narrativeText">${p.narrative}</p>
       <div class="narrative-controls">
-        <button class="table-toggle" id="liveKeyToggle">Use live Claude API</button>
-        <button class="table-toggle" id="liveGenBtn" style="display:none;">Generate live insight</button>
+        <button class="link-btn" id="liveKeyToggle">Use live Claude API</button>
+        <button class="link-btn" id="liveGenBtn" style="display:none;">Generate live insight</button>
       </div>
       <div class="key-panel" id="keyPanel">
-        <input type="password" id="apiKeyInput" placeholder="sk-ant-...">
+        <input type="password" id="apiKeyInput" placeholder="sk-ant-…" autocomplete="off" spellcheck="false">
         <button id="keySaveBtn">Save</button>
         <button id="keyClearBtn">Clear</button>
         <div class="key-note">Stored only in this browser's localStorage — never written to a file, never committed to git, never sent anywhere except https://api.anthropic.com.</div>
@@ -743,21 +1036,30 @@ fetch('https://api.anthropic.com/v1/messages', {
   const { svg, meta } = renderScurve(p);
   document.getElementById('scurveWrap').innerHTML = svg;
   wireScurveHover(p, meta);
+  animateScurve();
   wireNarrativeControls(p);
+
+  kpis.forEach((k, i) => {
+    const el = document.querySelector(`[data-kpi="${i}"]`);
+    if (el) setTimeout(() => animateValue(el, k.raw, k.fmt, 800), 120 + i * 80);
+  });
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.querySelectorAll('#projectDetail .bar-fill').forEach((b, i) => {
+      b.style.transitionDelay = (i * 70) + 'ms';
+      b.style.width = b.dataset.w + '%';
+    });
+    document.querySelectorAll('#projectDetail .risk-meter').forEach(m => m.classList.add('lit'));
+  }));
 }
 
-function fmt(n) { return fmtMoneyK(n); }
-
+/* ---------- Live Claude API narrative ---------- */
 const API_KEY_STORAGE = 'cpd_anthropic_api_key';
 function getStoredApiKey() {
   try { return localStorage.getItem(API_KEY_STORAGE) || ''; } catch (e) { return ''; }
 }
-function setStoredApiKey(k) {
-  try { localStorage.setItem(API_KEY_STORAGE, k); } catch (e) {}
-}
-function clearStoredApiKey() {
-  try { localStorage.removeItem(API_KEY_STORAGE); } catch (e) {}
-}
+function setStoredApiKey(k) { try { localStorage.setItem(API_KEY_STORAGE, k); } catch (e) {} }
+function clearStoredApiKey() { try { localStorage.removeItem(API_KEY_STORAGE); } catch (e) {} }
 
 function buildNarrativePrompt(p) {
   const risks = p.risks.length ? p.risks.map(r => `${r.desc} (${r.status})`).join('; ') : 'None';
@@ -780,7 +1082,8 @@ async function generateLiveNarrative(p) {
 
   btn.disabled = true;
   btn.textContent = 'Generating…';
-  statusEl.textContent = 'Calling Claude API…';
+  statusEl.textContent = 'Calling Claude API';
+  statusEl.classList.add('working');
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -804,10 +1107,14 @@ async function generateLiveNarrative(p) {
     const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n').trim();
     if (!text) throw new Error('Empty response');
     textEl.textContent = text;
+    textEl.classList.remove('updated');
+    void textEl.offsetWidth;
+    textEl.classList.add('updated');
     statusEl.textContent = 'Live via Claude API';
   } catch (err) {
     statusEl.textContent = 'Live call failed (' + err.message + ') — showing static example';
   } finally {
+    statusEl.classList.remove('working');
     btn.disabled = false;
     btn.textContent = 'Generate live insight';
   }
@@ -830,14 +1137,17 @@ function wireNarrativeControls(p) {
   }
 
   toggleBtn.addEventListener('click', () => {
-    keyPanel.style.display = keyPanel.style.display === 'flex' ? 'none' : 'flex';
-    if (existing) keyInput.value = existing;
+    keyPanel.classList.toggle('open');
+    if (keyPanel.classList.contains('open')) {
+      if (getStoredApiKey()) keyInput.value = getStoredApiKey();
+      keyInput.focus();
+    }
   });
   saveBtn.addEventListener('click', () => {
     const v = keyInput.value.trim();
     if (!v) return;
     setStoredApiKey(v);
-    keyPanel.style.display = 'none';
+    keyPanel.classList.remove('open');
     genBtn.style.display = 'inline-block';
     toggleBtn.textContent = 'Change API key';
     statusEl.textContent = 'Key saved — click "Generate live insight"';
@@ -846,17 +1156,39 @@ function wireNarrativeControls(p) {
     clearStoredApiKey();
     keyInput.value = '';
     genBtn.style.display = 'none';
-    keyPanel.style.display = 'none';
+    keyPanel.classList.remove('open');
     toggleBtn.textContent = 'Use live Claude API';
     statusEl.textContent = 'Static example';
   });
   genBtn.addEventListener('click', () => generateLiveNarrative(p));
 }
 
+/* ---------- Scroll reveal ---------- */
+function initReveal() {
+  const els = document.querySelectorAll('.reveal');
+  if (REDUCED || !('IntersectionObserver' in window)) {
+    els.forEach(el => el.classList.add('in'));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  els.forEach((el, i) => {
+    el.style.transitionDelay = (i * 70) + 'ms';
+    io.observe(el);
+  });
+}
+
 renderTiles();
 renderSpiChart();
 renderTabs();
 renderDetail();
+initReveal();
 </script>
 </body>
 </html>
