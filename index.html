@@ -4,21 +4,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Capital Projects Portfolio Dashboard</title>
+<script>
+  // Applied before first paint so a returning dark-mode visitor doesn't see a flash of light.
+  // Default (no stored choice) is always light — this page does not follow system preference.
+  try {
+    if (localStorage.getItem('cpd_theme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  } catch (e) {}
+</script>
 <style>
   :root {
     color-scheme: light;
-    /* Off-white ground with a faint cool bias toward the blue accent */
-    --page-plane:     #f0f2f4;
-    --page-plane-2:   #e8ebef;
-    --surface-1:      #fbfcfd;
+    /* This dashboard commits to a single off-white theme by design — no dark mode. */
+    --page-plane:     #f6f5f1;
+    --page-plane-2:   #ece8df;
+    --surface-1:      #fdfcfa;
     --surface-2:      #ffffff;
-    --text-primary:   #14181c;
-    --text-secondary: #49525a;
-    --text-muted:     #79828b;
-    --gridline:       #e0e5ea;
-    --baseline:       #c2cad2;
-    --border:         rgba(20,24,28,0.09);
-    --border-strong:  rgba(20,24,28,0.16);
+    --text-primary:   #1b1a17;
+    --text-secondary: #56534c;
+    --text-muted:     #87837a;
+    --gridline:       #e4e0d6;
+    --baseline:       #c7c1b2;
+    --border:         rgba(27,24,15,0.09);
+    --border-strong:  rgba(27,24,15,0.16);
     --series-1:       #2a78d6;
     --series-1-soft:  rgba(42,120,214,0.13);
     --series-planned: #8b949d;
@@ -39,88 +48,135 @@
     --shadow-lg:      0 4px 10px rgba(20,24,28,0.07), 0 16px 34px rgba(20,24,28,0.09);
     --ease:           cubic-bezier(0.22, 0.61, 0.36, 1);
     --ease-out:       cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* Sidebar chrome — deliberately fixed, not theme-reactive. Stays dark in both
+       light and dark content modes, so the two-tone contrast is always visible. */
+    --sidebar-bg:          #14171a;
+    --sidebar-bg-elevated: #1b1e22;
+    --sidebar-border:      rgba(255,255,255,0.08);
+    --sidebar-text:        #f2f1ee;
+    --sidebar-text-dim:    #a8a6a1;
+    --sidebar-text-muted:  #6c6a65;
+    --sidebar-accent:      #4c94ea;
+    --sidebar-active-bg:   rgba(76,148,234,0.16);
+    --sidebar-hover-bg:    rgba(255,255,255,0.045);
   }
-  @media (prefers-color-scheme: dark) {
-    :root:where(:not([data-theme="light"])) {
-      color-scheme: dark;
-      --page-plane:     #0e1113;
-      --page-plane-2:   #14181b;
-      --surface-1:      #181c20;
-      --surface-2:      #1e2328;
-      --text-primary:   #ffffff;
-      --text-secondary: #bfc7ce;
-      --text-muted:     #858e96;
-      --gridline:       #272c31;
-      --baseline:       #363d43;
-      --border:         rgba(255,255,255,0.10);
-      --border-strong:  rgba(255,255,255,0.18);
-      --series-1:       #3987e5;
-      --series-1-soft:  rgba(57,135,229,0.18);
-      --series-planned: #858e96;
-      --good:           #0ca30c;
-      --warning:        #fab219;
-      --serious:        #ec835a;
-      --critical:       #e66767;
-      --good-bg:        rgba(12,163,12,0.16);
-      --warning-bg:     rgba(250,178,25,0.14);
-      --serious-bg:     rgba(236,131,90,0.14);
-      --critical-bg:    rgba(230,103,103,0.14);
-      --good-ink:       #2fbf2f;
-      --warning-ink:    #fab219;
-      --serious-ink:    #ec835a;
-      --critical-ink:   #e66767;
-      --shadow-sm:      0 1px 2px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.25);
-      --shadow-md:      0 2px 4px rgba(0,0,0,0.4), 0 6px 16px rgba(0,0,0,0.3);
-      --shadow-lg:      0 4px 10px rgba(0,0,0,0.45), 0 16px 34px rgba(0,0,0,0.4);
-    }
-  }
+
+  /* Dark theme — only applied via the explicit toggle (data-theme="dark").
+     No prefers-color-scheme dependency: this page always defaults to light. */
   :root[data-theme="dark"] {
     color-scheme: dark;
-    --page-plane:     #0e1113;
-    --page-plane-2:   #14181b;
-    --surface-1:      #181c20;
-    --surface-2:      #1e2328;
-    --text-primary:   #ffffff;
-    --text-secondary: #bfc7ce;
-    --text-muted:     #858e96;
-    --gridline:       #272c31;
-    --baseline:       #363d43;
-    --border:         rgba(255,255,255,0.10);
-    --border-strong:  rgba(255,255,255,0.18);
-    --series-1:       #3987e5;
-    --series-1-soft:  rgba(57,135,229,0.18);
-    --series-planned: #858e96;
-    --good:           #0ca30c;
-    --warning:        #fab219;
-    --serious:        #ec835a;
-    --critical:       #e66767;
-    --good-bg:        rgba(12,163,12,0.16);
-    --warning-bg:     rgba(250,178,25,0.14);
-    --serious-bg:     rgba(236,131,90,0.14);
-    --critical-bg:    rgba(230,103,103,0.14);
-    --good-ink:       #2fbf2f;
-    --warning-ink:    #fab219;
-    --serious-ink:    #ec835a;
-    --critical-ink:   #e66767;
+    --page-plane:     #101214;
+    --page-plane-2:   #17191c;
+    --surface-1:      #191c1f;
+    --surface-2:      #202327;
+    --text-primary:   #f4f3f0;
+    --text-secondary: #b7b4ae;
+    --text-muted:     #86837c;
+    --gridline:       #2b2e31;
+    --baseline:       #3c3f43;
+    --border:         rgba(255,255,255,0.08);
+    --border-strong:  rgba(255,255,255,0.15);
+    --series-1:       #4c94ea;
+    --series-1-soft:  rgba(76,148,234,0.18);
+    --series-planned: #8b8e91;
+    --good:           #22c55e;
+    --warning:        #f2b134;
+    --serious:        #f0854a;
+    --critical:       #f0605c;
+    --good-bg:        rgba(34,197,94,0.16);
+    --warning-bg:     rgba(242,177,52,0.16);
+    --serious-bg:     rgba(240,133,74,0.16);
+    --critical-bg:    rgba(240,96,92,0.16);
+    --good-ink:       #4ade80;
+    --warning-ink:    #f2b134;
+    --serious-ink:    #f0854a;
+    --critical-ink:   #f0605c;
     --shadow-sm:      0 1px 2px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.25);
-    --shadow-md:      0 2px 4px rgba(0,0,0,0.4), 0 6px 16px rgba(0,0,0,0.3);
+    --shadow-md:      0 2px 4px rgba(0,0,0,0.4), 0 6px 16px rgba(0,0,0,0.32);
     --shadow-lg:      0 4px 10px rgba(0,0,0,0.45), 0 16px 34px rgba(0,0,0,0.4);
   }
 
   * { box-sizing: border-box; }
 
+  html { scroll-behavior: smooth; }
   body {
     margin: 0;
-    background:
-      radial-gradient(1200px 600px at 15% -10%, var(--page-plane-2), transparent 60%),
-      var(--page-plane);
-    background-attachment: fixed;
+    background: var(--page-plane);
     color: var(--text-primary);
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
+
+  /* ---------- App shell: two-tone sidebar + content ---------- */
+  .app-shell { display: flex; align-items: stretch; min-height: 100vh; }
+  .content {
+    flex: 1 1 auto; min-width: 0;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, var(--page-plane-2), transparent 60%),
+      var(--page-plane);
+  }
   .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 24px 88px; }
+  section[id] { scroll-margin-top: 24px; }
+
+  .sidebar {
+    flex: 0 0 258px; width: 258px; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 22px;
+    background: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border);
+    padding: 22px 16px; color: var(--sidebar-text);
+    scrollbar-width: thin;
+  }
+  .brand { display: flex; align-items: center; gap: 11px; padding: 0 6px; }
+  .brand-mark {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 9px; flex: none;
+    background: linear-gradient(155deg, var(--sidebar-accent), #2a5fb0);
+    color: #fff; font-weight: 700; font-size: 12.5px; letter-spacing: 0.01em;
+  }
+  .brand-name { font-size: 14px; font-weight: 640; letter-spacing: -0.01em; color: var(--sidebar-text); }
+  .brand-sub { font-size: 11px; color: var(--sidebar-text-muted); margin-top: 1px; }
+
+  .sidebar-nav { display: flex; flex-direction: column; gap: 20px; }
+  .nav-group { display: flex; flex-direction: column; gap: 3px; }
+  .nav-label {
+    font-size: 10px; font-weight: 650; letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--sidebar-text-muted); padding: 0 10px; margin-bottom: 5px;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px;
+    color: var(--sidebar-text-dim); font-size: 13px; font-weight: 500; text-decoration: none;
+    transition: background 0.2s var(--ease), color 0.2s var(--ease);
+  }
+  .nav-item svg { width: 16px; height: 16px; flex: none; opacity: 0.85; }
+  .nav-item:hover { background: var(--sidebar-hover-bg); color: var(--sidebar-text); }
+  .nav-item.active { background: var(--sidebar-active-bg); color: var(--sidebar-text); font-weight: 600; }
+  .nav-item.active svg { opacity: 1; color: var(--sidebar-accent); }
+  .nav-item:focus-visible { outline: 2px solid var(--sidebar-accent); outline-offset: 1px; }
+  .nav-dot { width: 7px; height: 7px; border-radius: 50%; flex: none; box-shadow: 0 0 0 3px transparent; }
+  .nav-item.active .nav-dot { box-shadow: 0 0 0 3px var(--sidebar-active-bg); }
+
+  .sidebar-bottom {
+    margin-top: auto; padding-top: 16px; border-top: 1px solid var(--sidebar-border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sidebar .theme-toggle { background: var(--sidebar-bg-elevated); border-color: var(--sidebar-border); color: var(--sidebar-text-dim); }
+  .sidebar .theme-toggle:hover { border-color: rgba(255,255,255,0.22); color: var(--sidebar-text); }
+  .sidebar .portfolio-badge { background: var(--sidebar-bg-elevated); border-color: var(--sidebar-border); color: var(--sidebar-text-dim); }
+
+  @media (max-width: 900px) {
+    .app-shell { flex-direction: column; }
+    .sidebar {
+      position: static; height: auto; width: 100%; flex: 0 0 auto;
+      flex-direction: row; align-items: center; flex-wrap: wrap; gap: 12px 18px;
+      border-right: none; border-bottom: 1px solid var(--sidebar-border);
+      padding: 14px 16px;
+    }
+    .sidebar-nav { flex-direction: row; flex-wrap: wrap; gap: 4px; flex: 1 1 auto; }
+    .nav-group { display: contents; }
+    .nav-label { display: none; }
+    .sidebar-bottom { margin-top: 0; padding-top: 0; border-top: none; }
+  }
 
   /* ---------- Header ---------- */
   header.top {
@@ -137,6 +193,21 @@
     text-wrap: balance;
   }
   header.top p { margin: 0; color: var(--text-secondary); font-size: 14px; }
+  .header-controls { display: flex; align-items: center; gap: 10px; }
+  .theme-toggle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 999px; border: 1px solid var(--border);
+    background: var(--surface-1); color: var(--text-secondary); cursor: pointer; padding: 0;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.26s var(--ease), box-shadow 0.26s var(--ease), border-color 0.26s var(--ease), color 0.26s var(--ease);
+  }
+  .theme-toggle:hover { transform: translateY(-2px) rotate(-8deg); box-shadow: var(--shadow-md); border-color: var(--border-strong); }
+  .theme-toggle:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
+  .theme-toggle svg { width: 17px; height: 17px; }
+  .theme-toggle .icon-sun { display: block; }
+  .theme-toggle .icon-moon { display: none; }
+  :root[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+  :root[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
   .portfolio-badge {
     font-size: 10.5px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase;
     color: var(--text-secondary); background: var(--surface-1); border: 1px solid var(--border);
@@ -220,22 +291,6 @@
   .sr-table.show { display: table; animation: fadeUp 0.4s var(--ease-out) both; }
   .sr-table th, .sr-table td { text-align: left; padding: 7px 9px; border-bottom: 1px solid var(--gridline); color: var(--text-secondary); }
   .sr-table th { color: var(--text-muted); font-weight: 650; }
-
-  /* ---------- Tabs ---------- */
-  .tabs { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 18px; }
-  .tab-btn {
-    font-size: 13px; font-weight: 540; padding: 9px 16px; border-radius: 999px;
-    border: 1px solid var(--border); background: var(--surface-1); color: var(--text-secondary);
-    cursor: pointer; font-family: inherit;
-    transition: background 0.26s var(--ease), color 0.26s var(--ease),
-                border-color 0.26s var(--ease), transform 0.26s var(--ease), box-shadow 0.26s var(--ease);
-  }
-  .tab-btn:hover { transform: translateY(-2px); border-color: var(--border-strong); box-shadow: var(--shadow-sm); }
-  .tab-btn.active {
-    background: var(--text-primary); color: var(--surface-1);
-    border-color: var(--text-primary); box-shadow: var(--shadow-md);
-  }
-  .tab-btn:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
 
   /* ---------- Project detail ---------- */
   #projectDetail { transition: opacity 0.22s var(--ease), transform 0.22s var(--ease); }
@@ -374,14 +429,15 @@
   .chart-svg-wrap { position: relative; }
 
   /* ---------- SVG animation hooks ---------- */
-  .spi-bar .bar-shape {
-    transform: scaleY(0); transform-box: fill-box; transform-origin: bottom;
-    transition: transform 0.85s var(--ease-out), filter 0.25s var(--ease);
+  .spi-row .bar-fill-h {
+    transform: scaleX(0); transform-box: fill-box; transform-origin: left;
+    transition: transform 0.9s var(--ease-out), filter 0.25s var(--ease);
   }
-  .spi-chart.lit .spi-bar .bar-shape { transform: scaleY(1); }
-  .spi-bar:hover .bar-shape { filter: brightness(1.09); }
-  .spi-bar .bar-label { opacity: 0; transition: opacity 0.4s var(--ease) 0.5s; }
-  .spi-chart.lit .spi-bar .bar-label { opacity: 1; }
+  .spi-chart.lit .spi-row .bar-fill-h { transform: scaleX(1); }
+  .spi-row:hover .bar-fill-h { filter: brightness(1.08); }
+  .spi-row .row-meta { opacity: 0; transition: opacity 0.4s var(--ease) 0.55s; }
+  .spi-chart.lit .spi-row .row-meta { opacity: 1; }
+  .spi-row .row-track-bg { fill: var(--gridline); }
 
   .draw-line { transition: stroke-dashoffset 1.15s var(--ease-out); }
   .area-fill { opacity: 0; transition: opacity 0.7s var(--ease) 0.35s; }
@@ -421,20 +477,89 @@
 
   /* ---------- Reduced motion ---------- */
   @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
     *, *::before, *::after {
       animation-duration: 0.001ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.001ms !important;
     }
     .reveal { opacity: 1; transform: none; }
-    .spi-bar .bar-shape { transform: scaleY(1); }
-    .spi-bar .bar-label, .area-fill, .endpoint { opacity: 1; }
+    .spi-row .bar-fill-h { transform: scaleX(1); }
+    .spi-row .row-meta, .area-fill, .endpoint { opacity: 1; }
     .risk-meter i { transform: scaleX(1); }
   }
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="app-shell">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">CP</span>
+      <div>
+        <div class="brand-name">Capital Projects</div>
+        <div class="brand-sub">Portfolio Reporting</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-group">
+        <div class="nav-label">Overview</div>
+        <a class="nav-item" href="#summary" data-navkey="summary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+            <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+          </svg>
+          <span>Portfolio Summary</span>
+        </a>
+        <a class="nav-item" href="#spi" data-navkey="spi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="20" x2="4" y2="12"/><line x1="10" y1="20" x2="10" y2="6"/>
+            <line x1="16" y1="20" x2="16" y2="14"/><line x1="21" y1="20" x2="21" y2="9"/>
+          </svg>
+          <span>Schedule Performance</span>
+        </a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Projects</div>
+        <div id="sidebarProjects"></div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Reporting</div>
+        <a class="nav-item" href="#dq" data-navkey="dq">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 12l2 2 4-4"/>
+          </svg>
+          <span>Data Quality</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4.5"/>
+          <line x1="12" y1="2.5" x2="12" y2="5"/>
+          <line x1="12" y1="19" x2="12" y2="21.5"/>
+          <line x1="4.2" y1="4.2" x2="6" y2="6"/>
+          <line x1="18" y1="18" x2="19.8" y2="19.8"/>
+          <line x1="2.5" y1="12" x2="5" y2="12"/>
+          <line x1="19" y1="12" x2="21.5" y2="12"/>
+          <line x1="4.2" y1="19.8" x2="6" y2="18"/>
+          <line x1="18" y1="6" x2="19.8" y2="4.2"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5Z"/>
+        </svg>
+      </button>
+      <span class="portfolio-badge">Portfolio demo project</span>
+    </div>
+  </aside>
+
+  <main class="content">
+  <div class="wrap">
 
   <header class="top">
     <div>
@@ -442,15 +567,14 @@
       <h1>Capital Projects Portfolio Dashboard</h1>
       <p>Executive &amp; project-level reporting · Snapshot as of Aug 1, 2026</p>
     </div>
-    <span class="portfolio-badge">Portfolio demo project</span>
   </header>
 
-  <section class="reveal">
+  <section class="reveal" id="summary">
     <h2 class="section-title">Portfolio Summary</h2>
     <div class="tile-row stagger" id="tileRow"></div>
   </section>
 
-  <section class="reveal">
+  <section class="reveal" id="spi">
     <h2 class="section-title">Schedule Performance by Project</h2>
     <div class="chart-card">
       <div class="chart-head">
@@ -472,13 +596,12 @@
     </div>
   </section>
 
-  <section class="reveal">
+  <section class="reveal" id="detail">
     <h2 class="section-title">Project Detail</h2>
-    <div class="tabs" id="tabRow"></div>
     <div id="projectDetail"></div>
   </section>
 
-  <section class="reveal">
+  <section class="reveal" id="dq">
     <h2 class="section-title">Data Quality — Field Report Cleaning Example</h2>
     <div class="card">
       <div class="dq-grid">
@@ -520,6 +643,9 @@
     <strong>About this project.</strong> This is a self-contained portfolio demo built to show dashboard reporting, KPI design, and data-cleaning conventions used in project controls — not a production system. All project data is synthetic. Built with hand-rolled SVG charts (no charting library) in a single HTML/CSS/JS file, styled to a validated accessible color system (colorblind-safe categorical palette, status colors always paired with a label, table-view fallback for every chart).
     The AI narrative panel is live-capable: click "Use live Claude API" under any project's narrative and paste an Anthropic API key to have Claude generate the executive summary from that project's real KPI data. The key is stored only in your browser's localStorage — it is never written to this file, never committed to version control, and is sent only to api.anthropic.com. Without a key, the panel shows a pre-written example so the dashboard works for anyone browsing the portfolio.
   </footer>
+
+  </div>
+  </main>
 
 </div>
 
@@ -700,48 +826,51 @@ function statusHex(key) {
 
 /* ---------- SPI bar chart ---------- */
 function renderSpiChart() {
-  const w = 1100, h = 240, padL = 44, padR = 20, padT = 20, padB = 38;
-  const plotW = w - padL - padR, plotH = h - padT - padB;
+  const w = 1100;
+  const trackX0 = 0, trackX1 = 1060, trackW = trackX1 - trackX0;
+  const padTop = 38, rowH = 78, padBottom = 22;
   const maxVal = 1.2;
-  const barGap = 44;
-  const barW = (plotW - barGap * (projects.length - 1)) / projects.length;
+  const h = padTop + projects.length * rowH + padBottom;
+  const trackH = 13;
 
-  const yTicks = [0, 0.3, 0.6, 0.9, 1.2];
-  let gridSvg = yTicks.map(v => {
-    const y = padT + plotH - (v / maxVal) * plotH;
-    return `<line x1="${padL}" y1="${y}" x2="${w - padR}" y2="${y}" stroke="var(--gridline)" stroke-width="1"/>
-            <text x="${padL - 10}" y="${y + 4}" text-anchor="end" font-size="11" fill="var(--text-muted)">${v.toFixed(1)}</text>`;
-  }).join('');
+  const targetX = trackX0 + (0.95 / maxVal) * trackW;
+  const targetTop = padTop - 10;
+  const targetBottom = h - padBottom + 6;
+  const header = `
+    <line x1="${targetX}" y1="${targetTop}" x2="${targetX}" y2="${targetBottom}"
+          stroke="var(--baseline)" stroke-width="1.5" stroke-dasharray="4,5"/>
+    <circle cx="${targetX}" cy="${targetTop}" r="2.5" fill="var(--baseline)"/>
+    <text x="${targetX}" y="${targetTop - 8}" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--text-muted)">Target 0.95</text>
+    <text x="${trackX0}" y="${h - 6}" font-size="10" fill="var(--text-muted)">0</text>
+    <text x="${trackX1}" y="${h - 6}" text-anchor="end" font-size="10" fill="var(--text-muted)">${maxVal.toFixed(1)}</text>`;
 
-  const targetY = padT + plotH - (0.95 / maxVal) * plotH;
-  gridSvg += `<line x1="${padL}" y1="${targetY}" x2="${w - padR}" y2="${targetY}" stroke="var(--baseline)" stroke-width="1.5" stroke-dasharray="4,5"/>
-              <text x="${w - padR}" y="${targetY - 7}" text-anchor="end" font-size="10" fill="var(--text-muted)">Target 0.95</text>`;
-
-  let bars = '';
+  let rows = '';
   projects.forEach((p, i) => {
-    const x = padL + i * (barW + barGap);
-    const barH = (p.spi / maxVal) * plotH;
-    const y = padT + plotH - barH;
+    const rowTop = padTop + i * rowH;
+    const nameY = rowTop + 14;
+    const trackY = rowTop + 28;
+    const fillW = Math.max(2, (p.spi / maxVal) * trackW);
     const color = statusHex(p.status);
-    bars += `
-      <g class="spi-bar" data-i="${i}" style="cursor:pointer">
-        <rect x="${x}" y="${padT}" width="${barW}" height="${plotH}" fill="transparent"/>
-        <rect class="bar-shape" x="${x}" y="${y}" width="${barW}" height="${barH}" rx="6" fill="${color}"
-              style="transition-delay:${i * 90}ms"/>
-        <text class="bar-label" x="${x + barW / 2}" y="${y - 10}" text-anchor="middle" font-size="14"
-              font-weight="650" fill="var(--text-primary)" style="transition-delay:${500 + i * 90}ms">${p.spi.toFixed(2)}</text>
-        <text x="${x + barW / 2}" y="${h - 12}" text-anchor="middle" font-size="11.5" fill="var(--text-secondary)">${p.short}</text>
+    rows += `
+      <g class="spi-row" data-i="${i}" style="cursor:pointer">
+        <rect x="${trackX0}" y="${rowTop}" width="${trackW}" height="${rowH - 12}" fill="transparent"/>
+        <text x="${trackX0}" y="${nameY}" font-size="14" font-weight="650" fill="var(--text-primary)">${p.short}</text>
+        <text class="row-meta" x="${trackX1}" y="${nameY}" text-anchor="end" font-size="12.5" fill="var(--text-muted)"
+              style="transition-delay:${500 + i * 100}ms"><tspan font-weight="700" fill="${color}">${p.spi.toFixed(2)}</tspan><tspan> · ${STATUS[p.status].label}</tspan></text>
+        <rect class="row-track-bg" x="${trackX0}" y="${trackY}" width="${trackW}" height="${trackH}" rx="6.5"/>
+        <rect class="bar-fill-h" x="${trackX0}" y="${trackY}" width="${fillW}" height="${trackH}" rx="6.5" fill="${color}"
+              style="transition-delay:${i * 110}ms"/>
       </g>`;
   });
 
   document.getElementById('spiChartWrap').innerHTML =
     `<svg class="spi-chart" viewBox="0 0 ${w} ${h}" width="100%" style="display:block;font-family:inherit;overflow:visible;">
-      ${gridSvg}${bars}
+      ${header}${rows}
     </svg>
     <div class="tooltip" id="spiTooltip"></div>`;
 
   const tooltip = document.getElementById('spiTooltip');
-  document.querySelectorAll('.spi-bar').forEach(g => {
+  document.querySelectorAll('.spi-row').forEach(g => {
     g.addEventListener('mousemove', e => {
       const p = projects[+g.dataset.i];
       const rect = g.closest('.chart-svg-wrap').getBoundingClientRect();
@@ -883,26 +1012,51 @@ function wireScurveHover(p, meta) {
   });
 }
 
-/* ---------- Tabs ---------- */
+/* ---------- Sidebar project nav (replaces a horizontal tab bar) ---------- */
 let activeProjectId = projects[0].id;
 
-function renderTabs() {
-  document.getElementById('tabRow').innerHTML = projects.map(p =>
-    `<button class="tab-btn ${p.id === activeProjectId ? 'active' : ''}" data-id="${p.id}">${p.short}</button>`
-  ).join('');
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (btn.dataset.id === activeProjectId) return;
-      activeProjectId = btn.dataset.id;
+function renderSidebarNav() {
+  document.getElementById('sidebarProjects').innerHTML = projects.map(p => `
+    <a class="nav-item ${p.id === activeProjectId ? 'active' : ''}" href="#detail" data-navkey="detail:${p.id}" data-project-id="${p.id}">
+      <span class="nav-dot" style="background:${statusHex(p.status)}"></span>
+      <span>${p.short}</span>
+    </a>
+  `).join('');
+  document.querySelectorAll('#sidebarProjects .nav-item').forEach(link => {
+    link.addEventListener('click', () => {
+      const id = link.dataset.projectId;
+      if (id === activeProjectId) return;
+      activeProjectId = id;
       const panel = document.getElementById('projectDetail');
       panel.classList.add('swapping');
       setTimeout(() => {
-        renderTabs();
+        renderSidebarNav();
         renderDetail();
         panel.classList.remove('swapping');
       }, REDUCED ? 0 : 190);
     });
   });
+}
+
+/* ---------- Scrollspy: highlights whichever section is currently in view ---------- */
+function setActiveNav(key) {
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.navkey === key);
+  });
+}
+function initNavSpy() {
+  const sections = ['summary', 'spi', 'detail', 'dq']
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+  if (!sections.length || !('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver((entries) => {
+    const visible = entries.filter(e => e.isIntersecting);
+    if (!visible.length) return;
+    const top = visible.reduce((a, b) => (a.boundingClientRect.top < b.boundingClientRect.top ? a : b));
+    const id = top.target.id;
+    setActiveNav(id === 'detail' ? `detail:${activeProjectId}` : id);
+  }, { rootMargin: '-15% 0px -55% 0px', threshold: 0 });
+  sections.forEach(s => io.observe(s));
 }
 
 /* ---------- Project detail ---------- */
@@ -1013,7 +1167,6 @@ fetch('https://api.anthropic.com/v1/messages', {
     <div class="narrative-card">
       <div class="narrative-head">
         <span class="ai-badge">AI-generated insight</span>
-        <span class="ai-status" id="aiStatus">Static example</span>
       </div>
       <p id="narrativeText">${p.narrative}</p>
       <div class="narrative-controls">
@@ -1184,11 +1337,40 @@ function initReveal() {
   });
 }
 
+/* ---------- Theme toggle ---------- */
+const THEME_STORAGE = 'cpd_theme';
+function currentTheme() {
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+}
+function applyThemeButtonState() {
+  const btn = document.getElementById('themeToggle');
+  if (!btn) return;
+  const isDark = currentTheme() === 'dark';
+  const label = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+  btn.setAttribute('aria-label', label);
+  btn.setAttribute('title', label);
+}
+function initTheme() {
+  applyThemeButtonState();
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    if (next === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    try { localStorage.setItem(THEME_STORAGE, next); } catch (e) {}
+    applyThemeButtonState();
+  });
+}
+
 renderTiles();
 renderSpiChart();
-renderTabs();
+renderSidebarNav();
 renderDetail();
 initReveal();
+initTheme();
+initNavSpy();
 </script>
 </body>
 </html>
