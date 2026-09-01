@@ -475,6 +475,221 @@
     .wrap { padding: 28px 18px 64px; }
   }
 
+  /* ---------- Insight tooltips (info dots) ---------- */
+  [data-info] { display: inline-flex; align-items: center; gap: 6px; }
+  h2.section-title[data-info] { display: flex; }
+
+  .info-dot {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 15px; height: 15px; flex: none; padding: 0; margin: 0;
+    border-radius: 50%; border: 1px solid var(--border-strong);
+    background: transparent; color: var(--text-muted);
+    font-family: inherit; font-size: 9.5px; font-weight: 700; line-height: 1;
+    text-transform: none; letter-spacing: 0; cursor: help; vertical-align: middle;
+    transition: color 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
+  }
+  .info-dot:hover, .info-dot[aria-expanded="true"] {
+    color: var(--series-1); border-color: var(--series-1); background: var(--series-1-soft);
+  }
+  .info-dot:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
+
+  .info-pop {
+    position: fixed; z-index: 70; width: 340px; max-width: calc(100vw - 24px);
+    background: var(--surface-2); color: var(--text-primary);
+    border: 1px solid var(--border-strong); border-radius: 12px;
+    box-shadow: var(--shadow-lg); padding: 14px 15px;
+    font-size: 12px; line-height: 1.55; text-align: left;
+    max-height: min(72vh, 560px); overflow-y: auto;
+    opacity: 0; visibility: hidden; transform: translateY(5px) scale(0.985);
+    transition: opacity 0.16s var(--ease), transform 0.16s var(--ease), visibility 0.16s;
+    pointer-events: none;
+  }
+  .info-pop.show { opacity: 1; visibility: visible; transform: none; pointer-events: auto; }
+  .info-pop h5 {
+    margin: 0 0 3px; font-size: 12.5px; font-weight: 660; letter-spacing: -0.006em;
+    color: var(--text-primary); text-transform: none;
+  }
+  .info-pop .pop-scope {
+    font-size: 9.5px; font-weight: 650; letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 9px;
+  }
+  .info-pop .pop-what { margin: 0 0 10px; color: var(--text-secondary); }
+  .info-pop .pop-row { margin: 0 0 10px; }
+  .info-pop .pop-row:last-of-type { margin-bottom: 0; }
+  .info-pop .pop-key {
+    display: block; font-size: 9.5px; font-weight: 650; letter-spacing: 0.085em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;
+  }
+  .info-pop .pop-mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px;
+    background: var(--page-plane); border: 1px solid var(--border); border-radius: 7px;
+    padding: 7px 9px; color: var(--text-primary); overflow-wrap: anywhere; line-height: 1.65;
+  }
+  .info-pop .pop-mono b { color: var(--series-1); font-weight: 700; }
+  .info-pop .pop-read { color: var(--text-secondary); }
+  .info-pop .pop-take {
+    border-left: 2px solid var(--series-1); padding-left: 10px;
+    color: var(--text-primary); font-weight: 520;
+  }
+  .info-pop .pop-foot {
+    margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .info-pop .pop-src { font-size: 10.5px; color: var(--text-muted); }
+  .info-pop .pop-src b { color: var(--text-secondary); font-weight: 600; }
+
+  /* ---------- Traceability: source chips + lineage drawer ---------- */
+  .src-chip {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 600;
+    letter-spacing: 0.02em; padding: 3px 8px; border-radius: 999px; white-space: nowrap;
+    background: var(--page-plane); border: 1px solid var(--border); color: var(--text-secondary);
+  }
+  .src-chip .sq { width: 7px; height: 7px; border-radius: 2px; flex: none; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .trace-btn {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 560;
+    color: var(--series-1); background: none; border: none; padding: 0; cursor: pointer;
+    font-family: inherit;
+  }
+  .trace-btn:hover { text-decoration: underline; }
+  .trace-btn:focus-visible { outline: 2px solid var(--series-1); outline-offset: 3px; border-radius: 3px; }
+  .trace-btn svg { width: 12px; height: 12px; flex: none; }
+
+  .drawer-scrim {
+    position: fixed; inset: 0; background: rgba(10,12,14,0.44); z-index: 80;
+    opacity: 0; visibility: hidden; transition: opacity 0.3s var(--ease), visibility 0.3s;
+  }
+  .drawer-scrim.show { opacity: 1; visibility: visible; }
+
+  .drawer {
+    position: fixed; top: 0; right: 0; height: 100vh; width: 540px; max-width: 100vw;
+    background: var(--surface-1); border-left: 1px solid var(--border-strong);
+    box-shadow: var(--shadow-lg); z-index: 81; display: flex; flex-direction: column;
+    transform: translateX(101%); transition: transform 0.34s var(--ease-out);
+  }
+  .drawer.open { transform: none; }
+  .drawer-head {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+    padding: 20px 22px 16px; border-bottom: 1px solid var(--border); flex: none;
+  }
+  .drawer-head .eyebrow { margin-bottom: 6px; }
+  .drawer-head h3 { margin: 0; font-size: 17px; font-weight: 650; letter-spacing: -0.018em; }
+  .drawer-head .sub { margin: 5px 0 0; font-size: 12px; color: var(--text-secondary); }
+  .drawer-close {
+    flex: none; width: 30px; height: 30px; border-radius: 8px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--surface-2); color: var(--text-secondary);
+    display: inline-flex; align-items: center; justify-content: center; padding: 0;
+    transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
+  }
+  .drawer-close:hover { border-color: var(--border-strong); color: var(--text-primary); }
+  .drawer-close:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
+  .drawer-close svg { width: 15px; height: 15px; }
+  .drawer-body { overflow-y: auto; padding: 20px 22px 40px; flex: 1 1 auto; }
+
+  .lin-step { position: relative; padding: 0 0 22px 30px; }
+  .lin-step:last-child { padding-bottom: 4px; }
+  .lin-step::before {
+    content: attr(data-step); position: absolute; left: 0; top: 0;
+    width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: var(--series-1);
+    background: var(--series-1-soft); border: 1px solid rgba(42,120,214,0.28);
+  }
+  .lin-step::after {
+    content: ""; position: absolute; left: 10px; top: 24px; bottom: 4px; width: 1px;
+    background: var(--gridline);
+  }
+  .lin-step:last-child::after { display: none; }
+  .lin-step h4 {
+    margin: 2px 0 8px; font-size: 10.5px; font-weight: 650; letter-spacing: 0.085em;
+    text-transform: uppercase; color: var(--text-muted);
+  }
+  .lin-step p { margin: 0 0 8px; font-size: 12.5px; line-height: 1.6; color: var(--text-secondary); }
+  .lin-step p:last-child { margin-bottom: 0; }
+  .lin-step .lin-mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; line-height: 1.75;
+    background: var(--page-plane); border: 1px solid var(--border); border-radius: 9px;
+    padding: 11px 13px; color: var(--text-primary); overflow-x: auto; margin: 0 0 9px;
+    white-space: pre;
+  }
+  .lin-step .lin-mono b { color: var(--series-1); font-weight: 700; }
+  .lin-step ul { margin: 0; padding-left: 17px; }
+  .lin-step li { font-size: 12.5px; line-height: 1.62; color: var(--text-secondary); margin-bottom: 6px; }
+  .lin-step li:last-child { margin-bottom: 0; }
+  .lin-step li b { color: var(--text-primary); font-weight: 600; }
+
+  table.lin-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  table.lin-table th {
+    text-align: left; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--text-muted); font-weight: 650; padding: 6px 8px; border-bottom: 1px solid var(--gridline);
+  }
+  table.lin-table td {
+    padding: 9px 8px; border-bottom: 1px solid var(--gridline); vertical-align: top;
+    color: var(--text-secondary); line-height: 1.5;
+  }
+  table.lin-table td.lin-val { font-variant-numeric: tabular-nums; color: var(--text-primary); font-weight: 600; white-space: nowrap; }
+  table.lin-table code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10.5px;
+    color: var(--text-primary); background: var(--page-plane); padding: 1px 4px; border-radius: 4px;
+  }
+  .lin-stamp { font-size: 10.5px; color: var(--text-muted); white-space: nowrap; }
+
+  .caveat {
+    border: 1px solid var(--warning-bg); background: var(--warning-bg); border-radius: 10px;
+    padding: 11px 13px; font-size: 12px; line-height: 1.6; color: var(--text-secondary);
+  }
+  .caveat b { color: var(--warning-ink); font-weight: 650; }
+
+  /* ---------- Data sources & lineage section ---------- */
+  .src-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(238px, 1fr)); gap: 14px; }
+  .src-card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 13px; padding: 16px 17px; box-shadow: var(--shadow-sm); transition: box-shadow 0.3s var(--ease), border-color 0.3s var(--ease); }
+  .src-card:hover { box-shadow: var(--shadow-md); border-color: var(--border-strong); }
+  .src-card .src-top { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .src-card .src-name { font-size: 13.5px; font-weight: 650; letter-spacing: -0.01em; }
+  .src-card .src-kind { font-size: 10px; font-weight: 650; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
+  .src-card dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 5px 10px; font-size: 11.5px; }
+  .src-card dt { color: var(--text-muted); white-space: nowrap; }
+  .src-card dd { margin: 0; color: var(--text-secondary); }
+  .src-card dd code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10.5px; color: var(--text-primary); overflow-wrap: anywhere; }
+  .freshness { display: inline-flex; align-items: center; gap: 5px; font-weight: 600; }
+  .freshness .fdot { width: 6px; height: 6px; border-radius: 50%; flex: none; background: var(--good); }
+  .freshness.stale .fdot { background: var(--warning); }
+
+  table.catalog { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.catalog th {
+    text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--text-muted); font-weight: 650; padding: 8px 9px; border-bottom: 1px solid var(--gridline);
+  }
+  table.catalog td { padding: 11px 9px; border-bottom: 1px solid var(--gridline); vertical-align: top; color: var(--text-secondary); line-height: 1.5; }
+  table.catalog tbody tr { transition: background 0.22s var(--ease); }
+  table.catalog tbody tr:hover { background: var(--series-1-soft); }
+  table.catalog td.cat-name { color: var(--text-primary); font-weight: 580; white-space: nowrap; }
+  table.catalog td.cat-formula { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: var(--text-primary); }
+  .catalog-scroll { overflow-x: auto; }
+
+  /* ---------- Narrative provenance ---------- */
+  .prov-strip {
+    margin-top: 14px; padding-top: 13px; border-top: 1px dashed var(--border-strong);
+  }
+  .prov-label { font-size: 9.5px; font-weight: 650; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+  .prov-chip {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 560;
+    padding: 5px 10px; border-radius: 8px; cursor: pointer; font-family: inherit;
+    background: var(--surface-2); border: 1px solid var(--border); color: var(--text-secondary);
+    transition: border-color 0.2s var(--ease), color 0.2s var(--ease), transform 0.2s var(--ease);
+    font-variant-numeric: tabular-nums;
+  }
+  .prov-chip:hover { border-color: var(--series-1); color: var(--text-primary); transform: translateY(-1px); }
+  .prov-chip:focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
+  .prov-chip b { color: var(--text-primary); font-weight: 680; }
+
+  .ai-badge { display: inline-flex; align-items: center; gap: 6px; }
+
+  @media (max-width: 700px) {
+    .drawer { width: 100%; }
+    .info-pop { width: calc(100vw - 24px); }
+  }
+
   /* ---------- Reduced motion ---------- */
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
@@ -534,6 +749,13 @@
           </svg>
           <span>Data Quality</span>
         </a>
+        <a class="nav-item" href="#lineage" data-navkey="lineage">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="12" r="2.5"/>
+            <path d="M8.2 7.3 15.6 11M8.2 16.7 15.6 13"/>
+          </svg>
+          <span>Data Lineage</span>
+        </a>
       </div>
     </nav>
 
@@ -579,7 +801,7 @@
     <div class="chart-card">
       <div class="chart-head">
         <div>
-          <div class="chart-title">Schedule Performance Index (SPI)</div>
+          <div class="chart-title" data-info="spi_chart">Schedule Performance Index (SPI)</div>
           <div class="legend" style="margin-top:8px;">
             <span class="item"><span class="swatch dot" style="background:var(--good)"></span>On track (SPI ≥ 0.95)</span>
             <span class="item"><span class="swatch dot" style="background:var(--warning)"></span>At risk (0.85–0.95)</span>
@@ -602,11 +824,11 @@
   </section>
 
   <section class="reveal" id="dq">
-    <h2 class="section-title">Data Quality — Field Report Cleaning Example</h2>
+    <h2 class="section-title" data-info="dq_pipeline">Data Quality — Progress Report Cleaning Example</h2>
     <div class="card">
       <div class="dq-grid">
         <div class="dq-card">
-          <h4>Raw daily field reports (before)</h4>
+          <h4>Raw daily progress reports (before)</h4>
           <div class="dq-scroll">
             <table class="dq-table">
               <thead><tr><th>Date</th><th>Task</th><th>Hours</th><th>Crew</th><th>Cost</th><th>% Complete</th></tr></thead>
@@ -635,7 +857,27 @@
           </div>
         </div>
       </div>
-      <p class="dq-note">Every reporting cycle, source field reports arrive with inconsistent time units (hours/minutes/day-fractions), mixed date formats, near-duplicate entries, and occasional out-of-range values. Before data reaches a dashboard, it's parsed into standard units, deduplicated against existing records, and range-checked — with anything outside plausible bounds flagged for review rather than silently accepted.</p>
+      <p class="dq-note">Every reporting cycle, the incoming progress reports arrive with inconsistent time units (hours/minutes/day-fractions), mixed date formats, near-duplicate entries, and occasional out-of-range values. Before data reaches a dashboard, it's parsed into standard units, deduplicated against existing records, and range-checked — with anything outside plausible bounds flagged for review rather than silently accepted.</p>
+    </div>
+  </section>
+
+  <section class="reveal" id="lineage">
+    <h2 class="section-title">Data Sources &amp; Metric Lineage</h2>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="chart-title" style="margin-bottom:6px;">Where every number on this page comes from</div>
+      <p class="dq-note" style="margin-top:0;">Four source files feed this dashboard. Each card below names the dataset, the team who owns it, how often it lands, and when it last ran — because a KPI is only as current as its slowest input. The <span aria-hidden="true">ⓘ</span> marker beside any tile, chart or card on this page opens its definition; <b>Trace to source</b> inside that popover opens the full lineage — the calculation with today's numbers, the raw fields behind it, and what the metric does not tell you.</p>
+      <div class="src-grid" id="sourceGrid" style="margin-top:18px;"></div>
+    </div>
+
+    <div class="card">
+      <div class="chart-title" style="margin-bottom:12px;">Metric catalog</div>
+      <div class="catalog-scroll">
+        <table class="catalog">
+          <thead><tr><th>Metric</th><th>Formula</th><th>Source systems</th><th>Lineage</th></tr></thead>
+          <tbody id="catalogBody"></tbody>
+        </table>
+      </div>
+      <p class="dq-note">Every metric is defined once, in one registry, and the tiles, charts, status colours, tooltips and this table all render from it. A definition cannot drift from the number it describes, because they are the same object.</p>
     </div>
   </section>
 
@@ -648,6 +890,23 @@
   </main>
 
 </div>
+
+<div class="info-pop" id="infoPop" role="dialog" aria-label="Metric detail"></div>
+
+<div class="drawer-scrim" id="drawerScrim"></div>
+<aside class="drawer" id="lineageDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" aria-hidden="true" inert>
+  <div class="drawer-head">
+    <div>
+      <div class="eyebrow">Data lineage</div>
+      <h3 id="drawerTitle">Metric</h3>
+      <p class="sub" id="drawerSub"></p>
+    </div>
+    <button class="drawer-close" id="drawerClose" type="button" aria-label="Close data lineage">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
 
 <script>
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -783,6 +1042,554 @@ function statusOf(spi, completed) {
 }
 projects.forEach(p => { p.status = statusOf(p.spi, p.completed); });
 
+/* =========================================================================
+   TRACEABILITY LAYER
+   Every number on this page resolves back to a named source system, a named
+   column, and a refresh timestamp. SOURCES describes the upstream systems,
+   FIELDS maps each raw input to its column in the staging layer, and METRICS
+   holds the definition + formula + calculation for everything displayed.
+   The tooltips and the lineage drawer are both rendered from these objects,
+   so a metric can never drift from its own documentation.
+   ========================================================================= */
+
+const SNAPSHOT = 'Aug 1, 2026';
+
+const SOURCES = {
+  schedule: {
+    id: 'schedule', name: 'Schedule Export', kind: 'Excel workbook', color: '#2a78d6',
+    dataset: 'schedule_export.xlsx → stg_schedule_activities',
+    owner: 'Planning & Scheduling',
+    cadence: 'Weekly · Mon 06:00 CT (schedule update cycle)',
+    refreshed: 'Aug 1, 2026 06:12 CT', fresh: true,
+    volume: '1,284 activities across 4 projects',
+    notes: 'One row per activity: baseline and current dates, baseline and actual % complete, budgeted cost. Baseline is the last approved revision (Rev 4); % complete is physical progress, not duration elapsed.'
+  },
+  reports: {
+    id: 'reports', name: 'Progress & Cost Reports', kind: 'CSV extract', color: '#7b5cd6',
+    dataset: 'progress_reports_YYYYMMDD.csv → stg_progress_reports',
+    owner: 'Delivery teams (per project)',
+    cadence: 'Daily · submitted by 18:00 local · loaded 20:00 CT',
+    refreshed: 'Jul 31, 2026 20:03 CT', fresh: true,
+    volume: '6,470 report rows · 3.1% flagged by validation rules',
+    notes: 'Hand-entered by the teams doing the work: hours, crew size, cost recorded and % complete. Everything here passes through the cleaning rules shown in Data Quality before any metric is allowed to use it.'
+  },
+  contracts: {
+    id: 'contracts', name: 'Contract & CO Register', kind: 'Excel workbook', color: '#0ca30c',
+    dataset: 'contract_register.xlsx → stg_contract_value',
+    owner: 'Contracts Administration',
+    cadence: 'On execution · reconciled weekly Fri 16:00 CT',
+    refreshed: 'Jul 31, 2026 16:40 CT', fresh: true,
+    volume: '4 contracts · 31 approved change orders',
+    notes: 'Only executed change orders count toward budget. Pending COs sit in a separate column and are excluded from every figure on this page.'
+  },
+  riskreg: {
+    id: 'riskreg', name: 'Risk Register', kind: 'Excel workbook', color: '#b9790a',
+    dataset: 'risk_register.xlsx → stg_risk_register',
+    owner: 'Project Manager + Risk Lead (per project)',
+    cadence: 'Reviewed bi-weekly at the project review meeting',
+    refreshed: 'Jul 29, 2026 (last review)', fresh: false,
+    volume: '5 open risks across 4 projects',
+    notes: 'Scores are the project team’s judgement, not a computed value — the only subjective input on this page.'
+  }
+};
+
+const FIELDS = {
+  contract_value: { label: 'Executed contract value + approved change orders', src: 'contracts', col: 'stg_contract_value.total_approved_value' },
+  planned_pct:    { label: 'Baseline % complete (cost-weighted)',              src: 'schedule',  col: 'stg_schedule_activities.bl_pct_complete' },
+  actual_pct:     { label: 'Actual % complete (cost-weighted)',                src: 'schedule',  col: 'stg_schedule_activities.pct_complete' },
+  actual_cost:    { label: 'Cost recorded to date',                            src: 'reports',   col: 'stg_progress_reports.cost_recorded' },
+  sv_days:        { label: 'Projected finish vs baseline finish',              src: 'schedule',  col: 'finish_date − bl_finish_date (longest path)' },
+  task_pct:       { label: 'Activity % complete, rolled up to WBS level 2',    src: 'schedule',  col: 'stg_schedule_activities.pct_complete' },
+  field_pct:      { label: 'Reported % complete (cross-check)',                src: 'reports',   col: 'stg_progress_reports.pct_complete' },
+  risk_score:     { label: 'Likelihood and impact scores (1–5)',               src: 'riskreg',   col: 'stg_risk_register.likelihood, .impact' },
+  raw_field:      { label: 'Raw progress report rows',                         src: 'reports',   col: 'stg_progress_reports.* (pre-validation)' }
+};
+
+/* Portfolio roll-up — the single source of truth for every portfolio figure. */
+const PORTFOLIO = (() => {
+  const totalBudget = projects.reduce((s, p) => s + p.budget, 0);
+  const totalEv     = projects.reduce((s, p) => s + p.ev, 0);
+  const totalPv     = projects.reduce((s, p) => s + p.pv, 0);
+  const totalAc     = projects.reduce((s, p) => s + p.actualCost, 0);
+  const active      = projects.filter(p => !p.completed);
+  const atRiskList  = projects.filter(p => p.status === 'warning' || p.status === 'serious');
+  const mean = arr => arr.reduce((s, v) => s + v, 0) / arr.length;
+  return {
+    id: '__portfolio__', name: 'Portfolio (all projects)',
+    totalBudget, totalEv, totalPv, totalAc,
+    weightedSpi: totalEv / totalPv,
+    weightedCpi: totalEv / totalAc,
+    simpleSpi: mean(projects.map(p => p.spi)),
+    simpleCpi: mean(projects.map(p => p.cpi)),
+    variance: totalEv - totalAc,
+    active, atRiskList, atRisk: atRiskList.length
+  };
+})();
+
+const pct  = n => (n * 100).toFixed(0) + '%';
+const pct1 = n => (n * 100).toFixed(1) + '%';
+const f2   = n => n.toFixed(2);
+const days = n => (n >= 0 ? '+' : '−') + Math.abs(n) + ' days';
+
+/* ---------- Metric catalog ----------
+   name    · display name
+   scope   · 'portfolio' | 'project' | 'view'  (view = a chart or panel, not a single number)
+   what    · plain-language definition
+   formula · the general formula, no numbers
+   calc    · the same formula with this instance's numbers substituted
+   read    · how to interpret the value / where the thresholds come from
+   take    · what this specific instance is telling you right now
+   inputs  · the raw fields the number is built from, with values
+   steps   · the transformation path from source system to displayed number
+   caveats · what this metric does not tell you                                */
+const METRICS = {
+
+  portfolio_value: {
+    name: 'Total Portfolio Value', scope: 'portfolio', sources: ['contracts'],
+    what: 'The approved contract value of all four projects combined — what the client has committed to pay, not what has been spent.',
+    formula: 'Portfolio Value = Σ (executed contract value + approved change orders)',
+    read: 'This is a commitment figure, so it only moves when a contract or change order is executed. It is deliberately not affected by spend, progress or forecast.',
+    calc: () => ({
+      lines: projects.map(p => `${p.short.padEnd(22)} ${fmtMoney(p.budget)}`).concat([
+        '─'.repeat(38), `Total                  <b>${fmtMoney(PORTFOLIO.totalBudget)}</b>`
+      ])
+    }),
+    take: () => `${fmtMoney(PORTFOLIO.totalBudget)} across ${projects.length} projects. ${fmtMoney(PORTFOLIO.totalAc)} (${pct(PORTFOLIO.totalAc / PORTFOLIO.totalBudget)}) has been recorded as spent to date.`,
+    inputs: () => projects.map(p => ({
+      label: p.short, value: fmtMoney(p.budget), field: 'contract_value',
+      note: 'Executed value + approved COs'
+    })),
+    steps: [
+      'Contracts Administration maintains the executed contract and change-order register as a workbook, one row per contract and per CO.',
+      'Weekly reconciliation sums <b>executed</b> COs per project into <code>total_approved_value</code>. Pending COs are held in a separate column and excluded.',
+      'The dashboard sums the four project rows at render time — no value is typed into the page.'
+    ],
+    caveats: [
+      'Excludes pending change orders. Cedar Ridge has a change-order backlog awaiting client sign-off, so its approved value understates likely final cost.'
+    ]
+  },
+
+  portfolio_spi: {
+    name: 'Portfolio SPI', scope: 'portfolio', sources: ['schedule', 'contracts'],
+    what: 'Cost-weighted Schedule Performance Index across the portfolio — how much of the work value planned by today has actually been earned.',
+    formula: 'Portfolio SPI = Σ Earned Value ÷ Σ Planned Value',
+    read: '1.00 = exactly on plan. ≥ 0.95 is treated as on track, 0.85–0.95 at risk, below 0.85 behind. Weighted by contract value, so a large project moves this number more than a small one.',
+    calc: () => ({
+      lines: [
+        `Σ EV = Σ (budget × actual %)  = <b>${fmtMoney(PORTFOLIO.totalEv)}</b>`,
+        `Σ PV = Σ (budget × planned %) = <b>${fmtMoney(PORTFOLIO.totalPv)}</b>`,
+        '',
+        `SPI  = ${fmtMoney(PORTFOLIO.totalEv)} ÷ ${fmtMoney(PORTFOLIO.totalPv)} = <b>${f2(PORTFOLIO.weightedSpi)}</b>`,
+        '',
+        `(unweighted average of the 4 project SPIs = ${f2(PORTFOLIO.simpleSpi)})`
+      ]
+    }),
+    take: () => {
+      const d = PORTFOLIO.weightedSpi - PORTFOLIO.simpleSpi;
+      const big = [...projects].sort((a, b) => b.budget - a.budget).slice(0, 2);
+      const why = d >= 0 ? 'the largest projects are the stronger performers' : 'the largest projects are the ones dragging';
+      const warn = d >= 0 ? 'the plain average understates the portfolio' : 'the plain average flatters the portfolio';
+      return `Weighted SPI is ${f2(PORTFOLIO.weightedSpi)} against ${f2(PORTFOLIO.simpleSpi)} as a plain average — a ${Math.abs(d * 100).toFixed(0)}-point gap, because ${why} (${big.map(p => `${p.short} ${f2(p.spi)}`).join(', ')}). Read the weighted figure; ${warn}.`;
+    },
+    inputs: () => projects.map(p => ({
+      label: p.short, value: `${pct(p.actualPct)} actual / ${pct(p.plannedPct)} planned`,
+      field: 'actual_pct', note: `Weight ${pct(p.budget / PORTFOLIO.totalBudget)} of portfolio`
+    })),
+    steps: [
+      'Activity % complete from the schedule export is weighted by each activity’s budgeted cost and rolled to a project-level actual %; the same roll-up against the approved baseline gives planned %.',
+      'Earned Value = contract value × actual %. Planned Value = contract value × planned %.',
+      'The portfolio ratio sums EV and PV <b>before</b> dividing — never an average of ratios, which would weight a $6.75M project the same as a $24.1M one.'
+    ],
+    caveats: () => {
+      const doneShare = projects.filter(p => p.completed).reduce((s, p) => s + p.budget, 0) / PORTFOLIO.totalBudget;
+      const act = PORTFOLIO.active;
+      const activeSpi = act.reduce((s, p) => s + p.ev, 0) / act.reduce((s, p) => s + p.pv, 0);
+      return [`A completed project sits permanently at SPI ≈ 1.0 and dilutes the signal. Completed work is <b>${pct(doneShare)}</b> of portfolio value here — strip it out and active-only SPI is <b>${f2(activeSpi)}</b>, not ${f2(PORTFOLIO.weightedSpi)}. The tile is accurate; it is not the number to steer by.`];
+    }
+  },
+
+  portfolio_cpi: {
+    name: 'Portfolio CPI', scope: 'portfolio', sources: ['schedule', 'reports', 'contracts'],
+    what: 'Cost-weighted Cost Performance Index — the value of work earned for every dollar actually spent.',
+    formula: 'Portfolio CPI = Σ Earned Value ÷ Σ Actual Cost',
+    read: '1.00 = a dollar of value earned per dollar spent. Above 1.00 is under budget; below is over. 0.90 means you are getting 90¢ of planned work per dollar spent.',
+    calc: () => ({
+      lines: [
+        `Σ EV = <b>${fmtMoney(PORTFOLIO.totalEv)}</b>   (earned)`,
+        `Σ AC = <b>${fmtMoney(PORTFOLIO.totalAc)}</b>   (recorded cost)`,
+        '',
+        `CPI  = ${fmtMoney(PORTFOLIO.totalEv)} ÷ ${fmtMoney(PORTFOLIO.totalAc)} = <b>${f2(PORTFOLIO.weightedCpi)}</b>`,
+        `CV   = EV − AC = <b>${fmtMoneyK(PORTFOLIO.variance)}</b>`
+      ]
+    }),
+    take: () => {
+      const worst = projects.reduce((a, b) => (a.budgetVariance <= b.budgetVariance ? a : b));
+      return `${f2(PORTFOLIO.weightedCpi)} — a ${fmtMoneyK(PORTFOLIO.variance)} cost variance portfolio-wide. ${worst.short} is the single largest contributor at ${fmtMoneyK(worst.budgetVariance)}.`;
+    },
+    inputs: () => projects.map(p => ({
+      label: p.short, value: `EV ${fmtMoney(p.ev)} / AC ${fmtMoney(p.actualCost)}`,
+      field: 'actual_cost', note: `CPI ${f2(p.cpi)}`
+    })),
+    steps: [
+      'Actual cost is the sum of <code>cost_recorded</code> across the progress report rows for that project, up to the snapshot date.',
+      'Earned value reuses the same EV computed for SPI — one definition, both metrics.',
+      'EV and AC are summed across projects before the division, for the same weighting reason as SPI.'
+    ],
+    caveats: [
+      'The reports capture cost <b>recorded against work done</b>, not money already committed. Orders placed but not yet invoiced are invisible here, which flatters CPI on any project mid-procurement.'
+    ]
+  },
+
+  projects_at_risk: {
+    name: 'Projects At Risk', scope: 'portfolio', sources: ['schedule'],
+    what: 'How many projects have a Schedule Performance Index below the 0.95 on-track threshold.',
+    formula: 'At Risk = count( projects where SPI < 0.95 )',
+    read: 'A count, not a severity. One project at 0.94 and one at 0.60 both register as 1 — use the SPI chart to see the depth of the problem.',
+    calc: () => ({
+      lines: projects.map(p => {
+        const flag = (p.status === 'warning' || p.status === 'serious') ? '◀ counted' : '';
+        return `${p.short.padEnd(22)} SPI ${f2(p.spi)}  ${flag}`;
+      }).concat(['─'.repeat(38), `At risk                <b>${PORTFOLIO.atRisk}</b>`])
+    }),
+    take: () => `${PORTFOLIO.atRisk} of ${projects.length}: ${PORTFOLIO.atRiskList.map(p => `${p.short} (${f2(p.spi)})`).join(' and ')}.`,
+    inputs: () => projects.map(p => ({
+      label: p.short, value: f2(p.spi), field: 'actual_pct',
+      note: STATUS[p.status].label
+    })),
+    steps: [
+      'Each project’s SPI is computed from the schedule roll-up (see Portfolio SPI).',
+      'The 0.95 / 0.85 thresholds are the portfolio reporting standard, applied in one place (<code>statusOf()</code>) so the tile, the chart colours, the sidebar dots and the status pills can never disagree.',
+      'Completed projects are classified as Completed and never counted as at risk.'
+    ],
+    caveats: [
+      'Threshold-based, so it is discontinuous: a project drifting from 0.96 to 0.94 flips the tile from 1 to 2 with no change in real severity.'
+    ]
+  },
+
+  spi: {
+    name: 'Schedule Performance Index (SPI)', scope: 'project', sources: ['schedule'],
+    what: 'The ratio of work actually completed to the work that should have been completed by today.',
+    formula: 'SPI = Earned Value ÷ Planned Value = actual % complete ÷ planned % complete',
+    read: '≥ 1.00 ahead of plan · 0.95–1.00 slight slip · 0.85–0.95 at risk · < 0.85 behind. It is a ratio of work volume, not of time.',
+    calc: p => ({
+      lines: [
+        `actual %  = <b>${pct(p.actualPct)}</b>   (cost-weighted roll-up)`,
+        `planned % = <b>${pct(p.plannedPct)}</b>   (approved baseline)`,
+        '',
+        `SPI = ${p.actualPct.toFixed(2)} ÷ ${p.plannedPct.toFixed(2)} = <b>${f2(p.spi)}</b>`,
+        '',
+        `EV = ${fmtMoney(p.budget)} × ${pct(p.actualPct)}  = ${fmtMoney(p.ev)}`,
+        `PV = ${fmtMoney(p.budget)} × ${pct(p.plannedPct)} = ${fmtMoney(p.pv)}`
+      ]
+    }),
+    take: p => {
+      const gap = (p.actualPct - p.plannedPct) * p.budget;
+      if (p.completed) return `Closed out at ${f2(p.spi)} — work delivered essentially on the baseline curve.`;
+      return p.spi >= 1
+        ? `${pct1(p.actualPct - p.plannedPct)} of scope ahead of plan — about ${fmtMoney(Math.abs(gap))} of work earned early.`
+        : `${pct1(p.plannedPct - p.actualPct)} of scope short of plan — roughly ${fmtMoney(Math.abs(gap))} of work that should be done and is not.`;
+    },
+    inputs: p => [
+      { label: 'Actual % complete', value: pct(p.actualPct), field: 'actual_pct', note: 'Cost-weighted across ' + p.tasks.length + ' WBS groups' },
+      { label: 'Planned % complete', value: pct(p.plannedPct), field: 'planned_pct', note: 'Approved baseline Rev 4' },
+      { label: 'Contract value', value: fmtMoney(p.budget), field: 'contract_value', note: 'Used to convert % into EV/PV dollars' }
+    ],
+    steps: [
+      'Delivery leads record activity progress in the weekly schedule update; physical % complete, not duration elapsed.',
+      'Each activity’s % is weighted by its budgeted cost and rolled to project level — so a $2M activity moves the number more than a $50K one.',
+      'The same roll-up runs against the approved baseline to produce planned %.',
+      'The % complete reported in the progress CSVs is compared against the schedule figure as an independent cross-check; gaps over 10 points are flagged for review before publication.'
+    ],
+    caveats: [
+      'SPI treats all remaining work as interchangeable. A project can show 0.95 while the specific late activities sit on the critical path — always read it alongside Schedule Variance (days).'
+    ]
+  },
+
+  cpi: {
+    name: 'Cost Performance Index (CPI)', scope: 'project', sources: ['schedule', 'reports', 'contracts'],
+    what: 'How much work value has been earned for every dollar actually spent.',
+    formula: 'CPI = Earned Value ÷ Actual Cost',
+    read: '1.00 = on budget for the work done. Above 1.00 = getting more value per dollar than planned. Below 1.00 = burning cash faster than earning value.',
+    calc: p => ({
+      lines: [
+        `EV = ${fmtMoney(p.budget)} × ${pct(p.actualPct)} = <b>${fmtMoney(p.ev)}</b>`,
+        `AC = <b>${fmtMoney(p.actualCost)}</b>   (cost recorded to date)`,
+        '',
+        `CPI = ${fmtMoney(p.ev)} ÷ ${fmtMoney(p.actualCost)} = <b>${f2(p.cpi)}</b>`
+      ]
+    }),
+    take: p => p.cpi >= 1
+      ? `Earning ${(p.cpi).toFixed(2)} of value per dollar spent — ${fmtMoney(Math.abs(p.budgetVariance))} favourable at today’s progress.`
+      : `Earning only ${(p.cpi).toFixed(2)} of value per dollar spent. At this rate the ${fmtMoney(p.budget)} budget forecasts to about ${fmtMoney(p.budget / p.cpi)} at completion.`,
+    inputs: p => [
+      { label: 'Actual cost to date', value: fmtMoney(p.actualCost), field: 'actual_cost', note: 'Recorded cost — excludes open commitments' },
+      { label: 'Actual % complete', value: pct(p.actualPct), field: 'actual_pct', note: 'Drives earned value' },
+      { label: 'Contract value', value: fmtMoney(p.budget), field: 'contract_value', note: 'Executed value + approved COs' }
+    ],
+    steps: [
+      'Progress report rows are filtered to this project and to reporting periods ≤ the snapshot date, then summed to actual cost.',
+      'Earned value is computed once (contract value × actual %) and shared with SPI, so the two indices always reconcile.',
+      'CPI at completion is not forecast on this page — the tile shows performance to date only.'
+    ],
+    caveats: [
+      'Because the reports hold recorded rather than committed cost, CPI looks artificially good right after a large order is placed and drops when the invoice lands.'
+    ]
+  },
+
+  sv_days: {
+    name: 'Schedule Variance (days)', scope: 'project', sources: ['schedule'],
+    what: 'How many calendar days the projected finish date sits ahead of or behind the approved baseline finish date.',
+    formula: 'SV(days) = projected critical-path finish − baseline finish',
+    read: 'Negative = late. This is a date measure taken from the longest path, which is why it can disagree with SPI: SPI counts work volume, this counts the finish date.',
+    calc: p => ({
+      lines: [
+        `Baseline finish (Rev 4)  ${p.end}`,
+        `Projected finish         ${p.scheduleVarianceDays >= 0 ? p.scheduleVarianceDays + ' days earlier' : Math.abs(p.scheduleVarianceDays) + ' days later'}`,
+        '',
+        `SV = <b>${days(p.scheduleVarianceDays)}</b>    ·    SPI = ${f2(p.spi)}`
+      ]
+    }),
+    take: p => {
+      const agree = (p.scheduleVarianceDays >= 0) === (p.spi >= 1);
+      return agree
+        ? `Days and SPI agree — the ${p.scheduleVarianceDays >= 0 ? 'gain' : 'slip'} is broad-based rather than confined to one activity.`
+        : `Days and SPI disagree: overall work volume reads ${f2(p.spi)} but the finish date is ${days(p.scheduleVarianceDays)}. That pattern means the late work is sitting on the critical path.`;
+    },
+    inputs: p => [
+      { label: 'Projected critical-path finish', value: days(p.scheduleVarianceDays) + ' vs baseline', field: 'sv_days', note: 'Longest-path calculation, weekly update' },
+      { label: 'Baseline finish date', value: p.end, field: 'planned_pct', note: 'Approved baseline Rev 4' }
+    ],
+    steps: [
+      'The longest path is recalculated at each weekly schedule update from actual start/finish dates and the remaining durations the delivery teams enter.',
+      'The projected finish of the last critical activity is differenced against the approved baseline finish.',
+      'Reported in calendar days, not working days — a 5-working-day slip shows here as 7.'
+    ],
+    caveats: [
+      'Only as good as the remaining-duration estimates in the weekly update. A slip is usually visible in the progress reports one to two weeks before it appears here.'
+    ]
+  },
+
+  budget_variance: {
+    name: 'Budget Variance (Cost Variance)', scope: 'project', sources: ['reports', 'schedule', 'contracts'],
+    what: 'The dollar gap between the value of work earned and the money actually spent to earn it.',
+    formula: 'CV = Earned Value − Actual Cost',
+    read: 'Positive = under budget for the work completed. It is the dollar form of CPI: same inputs, absolute rather than ratio.',
+    calc: p => ({
+      lines: [
+        `EV = <b>${fmtMoney(p.ev)}</b>`,
+        `AC = <b>${fmtMoney(p.actualCost)}</b>`,
+        '',
+        `CV = ${fmtMoney(p.ev)} − ${fmtMoney(p.actualCost)} = <b>${fmtMoneyK(p.budgetVariance)}</b>`,
+        `     (= CPI ${f2(p.cpi)})`
+      ]
+    }),
+    take: p => `${fmtMoneyK(p.budgetVariance)} at ${pct(p.actualPct)} complete. Held at the current rate, that scales to roughly ${fmtMoneyK(p.budgetVariance / Math.max(p.actualPct, 0.01))} by completion.`,
+    inputs: p => [
+      { label: 'Earned value', value: fmtMoney(p.ev), field: 'actual_pct', note: 'Contract value × actual %' },
+      { label: 'Actual cost', value: fmtMoney(p.actualCost), field: 'actual_cost', note: 'Recorded cost to snapshot date' }
+    ],
+    steps: [
+      'Same two inputs as CPI, subtracted rather than divided — the page never stores this number, it is derived at render.',
+      'Extrapolation in the reading above is a straight-line projection of the current rate; it is not a formal EAC.'
+    ],
+    caveats: [
+      'A favourable variance early in a project often reflects work that is easy and front-loaded rather than genuine efficiency.'
+    ]
+  },
+
+  spi_chart: {
+    name: 'Schedule Performance by Project', scope: 'view', sources: ['schedule', 'contracts'],
+    what: 'One bar per project on a common 0–1.2 SPI scale, with the 0.95 on-track threshold drawn as a reference line.',
+    formula: 'bar length ∝ SPI · colour = band(SPI) · reference line at 0.95',
+    read: 'Compare each bar to the dashed line, not to the other bars. Colour repeats the same information as position so the chart survives being printed in greyscale or read by a colourblind viewer.',
+    calc: () => ({
+      lines: projects.map(p => {
+        const bar = '█'.repeat(Math.round(p.spi * 20)).padEnd(24);
+        return `${p.short.padEnd(22)} ${bar} ${f2(p.spi)}`;
+      }).concat(['', `threshold ${'·'.repeat(Math.round(0.95 * 20) - 1)}│ 0.95`])
+    }),
+    take: () => `${PORTFOLIO.atRisk} of ${projects.length} bars fall left of the 0.95 line. The spread runs ${f2(Math.min(...projects.map(p => p.spi)))} to ${f2(Math.max(...projects.map(p => p.spi)))}.`,
+    inputs: () => projects.map(p => ({
+      label: p.short, value: f2(p.spi), field: 'actual_pct', note: STATUS[p.status].label
+    })),
+    steps: [
+      'Bars are drawn directly from the same <code>p.spi</code> values as the KPI cards — the chart holds no numbers of its own.',
+      'Colour is assigned by <code>statusOf()</code>, the single threshold function used everywhere on the page.',
+      'The axis is fixed at 0–1.2 rather than scaled to the data, so bar lengths stay comparable between reporting cycles.'
+    ],
+    caveats: [
+      'Bar length encodes SPI, not project size. Cedar Ridge has the shortest bar but is the smallest project — the schedule risk it represents in dollars is smaller than the visual implies.'
+    ]
+  },
+
+  scurve: {
+    name: 'Planned vs. Actual Cost (S-curve)', scope: 'project', sources: ['reports', 'schedule', 'contracts'],
+    what: 'Cumulative spend over the project duration against the baseline spend curve, with a Today marker.',
+    formula: 'planned(t) = contract value × baseline cumulative % · actual(t) = Σ cost recorded through period t',
+    read: 'The vertical gap at Today is the cost position; the horizontal gap is roughly the time position. Actual below planned can mean underspend or under-progress — read it with SPI to tell them apart.',
+    calc: p => ({
+      lines: [
+        `Contract value      <b>${fmtMoney(p.budget)}</b>`,
+        `Actual @ today      <b>${fmtMoney(p.actualCost)}</b>   (${pct(p.actualCost / p.budget)} of budget)`,
+        `Progress @ today    <b>${pct(p.actualPct)}</b> complete`,
+        '',
+        `Spend is ${p.actualCost / p.budget > p.actualPct ? 'ahead of' : 'behind'} progress by ${pct1(Math.abs(p.actualCost / p.budget - p.actualPct))} of budget`
+      ]
+    }),
+    take: p => p.actualCost / p.budget > p.actualPct
+      ? `${pct(p.actualCost / p.budget)} of budget spent for ${pct(p.actualPct)} of work — the curve is running above where progress justifies.`
+      : `${pct(p.actualCost / p.budget)} of budget spent for ${pct(p.actualPct)} of work — spend is tracking at or below progress.`,
+    inputs: p => [
+      { label: 'Cumulative actual cost', value: fmtMoney(p.actualCost), field: 'actual_cost', note: 'Monthly reporting periods, cumulative' },
+      { label: 'Baseline spend curve', value: fmtMoney(p.budget) + ' over ' + p.months + ' periods', field: 'planned_pct', note: 'Approved baseline cash flow' }
+    ],
+    steps: [
+      'Progress report rows are grouped by reporting period and accumulated to give the actual curve.',
+      'The planned curve is the approved baseline cash flow — the same baseline that produces planned % complete for SPI.',
+      'The actual line stops at the last closed reporting period; the Today marker sits at that boundary, which is why it does not reach the right edge.'
+    ],
+    caveats: [
+      'The demo renders both curves from a smooth model rather than the real period-by-period rows — a production build would plot the actual values, which are lumpy around procurement milestones.'
+    ]
+  },
+
+  task_progress: {
+    name: 'Task Progress', scope: 'project', sources: ['schedule', 'reports'],
+    what: 'Actual versus planned % complete for each WBS level-2 work package. The tick mark on each bar is the planned position.',
+    formula: 'bar = actual % · tick = planned % · gap = actual − planned',
+    read: 'Bar short of the tick means that package is behind. This is where a project-level SPI gets decomposed into something actionable.',
+    calc: p => ({
+      lines: p.tasks.map(t => {
+        const d = t.actual - t.planned;
+        const sign = d === 0 ? '  on plan' : (d > 0 ? '+' : '−') + Math.abs(Math.round(d * 100)) + ' pts';
+        return `${t.name.padEnd(26)} ${String(Math.round(t.actual * 100)).padStart(3)}% vs ${String(Math.round(t.planned * 100)).padStart(3)}%  ${sign}`;
+      })
+    }),
+    take: p => {
+      const worst = p.tasks.reduce((a, b) => (a.actual - a.planned <= b.actual - b.planned ? a : b));
+      const gap = Math.round((worst.planned - worst.actual) * 100);
+      return gap > 0
+        ? `${worst.name} is the largest drag at ${gap} points behind plan — the leading contributor to this project’s SPI of ${f2(p.spi)}.`
+        : `No work package is behind plan; the weakest is ${worst.name}, level with its baseline.`;
+    },
+    inputs: p => p.tasks.map(t => ({
+      label: t.name, value: `${Math.round(t.actual * 100)}% / ${Math.round(t.planned * 100)}% planned`,
+      field: 'task_pct', note: 'WBS level 2 roll-up'
+    })),
+    steps: [
+      'Delivery leads enter activity progress in the weekly schedule update; the daily progress CSVs carry an independently reported % for the same work.',
+      'Activities are rolled to WBS level 2 with cost weighting to produce these work-package figures.',
+      'Where the schedule export and the progress reports disagree by more than 10 points, the row is held for review rather than published.'
+    ],
+    caveats: [
+      'Percent complete on a work package is an estimate made by the person doing the work. The 100%-capped rule in the Data Quality panel exists because these values do occasionally arrive above 100.'
+    ]
+  },
+
+  risk_register: {
+    name: 'Open Risks', scope: 'project', sources: ['riskreg'],
+    what: 'Risks currently open on this project, scored by the project team on likelihood and impact.',
+    formula: 'severity = round( (likelihood + impact) ÷ 2 )   · both scored 1–5',
+    read: 'The meter shows severity out of 5. Unlike every other figure on this page, these are judgement calls made at the bi-weekly project review, not values computed from a system.',
+    calc: p => ({
+      lines: p.risks.length
+        ? p.risks.map(r => `${r.desc.slice(0, 34).padEnd(36)} L${r.likelihood} × I${r.impact} → sev ${Math.round((r.likelihood + r.impact) / 2)}  ${r.status}`)
+        : ['No risks open at closeout.']
+    }),
+    take: p => p.risks.length
+      ? `${p.risks.length} open. Highest severity: ${p.risks.reduce((a, b) => (a.likelihood + a.impact >= b.likelihood + b.impact ? a : b)).desc}.`
+      : 'Register closed out clean — no open risks carried past completion.',
+    inputs: p => p.risks.length ? p.risks.map(r => ({
+      label: r.desc, value: `L${r.likelihood} × I${r.impact}`, field: 'risk_score', note: r.status
+    })) : [{ label: 'No open risks', value: '—', field: 'risk_score', note: 'Closed at project completion' }],
+    steps: [
+      'The PM and risk lead review the register at the bi-weekly project review meeting and re-score each open item.',
+      'Scores are written back to the register workbook; the dashboard reads those columns with no transformation applied.',
+      'Severity shown on the meter is the mean of likelihood and impact, rounded — the scores themselves are shown as text so the rounding is never the only thing you see.'
+    ],
+    caveats: [
+      'Last reviewed Jul 29, three days before this snapshot — the only figure on the page that is not current as of the snapshot date. Scores are subjective and are not comparable between project teams.'
+    ]
+  },
+
+  narrative: {
+    name: 'AI-generated insight', scope: 'project', sources: ['schedule', 'reports', 'riskreg', 'contracts'],
+    what: 'A short executive summary written by Claude from this project’s computed KPI values — not from free text, and not from the underlying source systems directly.',
+    formula: 'prompt = { SPI, CPI, SV days, CV, open risks } → claude-opus-5 → 3–4 sentence summary',
+    read: 'The model sees exactly the numbers listed in the provenance strip beneath the narrative and nothing else. If a claim in the text is not traceable to one of those inputs, treat it as unsupported.',
+    calc: p => ({
+      lines: [
+        `SPI                ${f2(p.spi)}`,
+        `CPI                ${f2(p.cpi)}`,
+        `Schedule variance  ${days(p.scheduleVarianceDays)}`,
+        `Budget variance    ${fmtMoneyK(p.budgetVariance)}`,
+        `Open risks         ${p.risks.length ? p.risks.length + ' (with status)' : 'none'}`,
+        '',
+        '→ claude-opus-5, max_tokens 300'
+      ]
+    }),
+    take: () => 'Every input is a metric already on this page with its own lineage — the narrative adds phrasing, never new facts.',
+    inputs: p => [
+      { label: 'SPI', value: f2(p.spi), field: 'actual_pct', note: 'Passed as a computed metric' },
+      { label: 'CPI', value: f2(p.cpi), field: 'actual_cost', note: 'Passed as a computed metric' },
+      { label: 'Schedule variance', value: days(p.scheduleVarianceDays), field: 'sv_days', note: 'Passed as a computed metric' },
+      { label: 'Budget variance', value: fmtMoneyK(p.budgetVariance), field: 'actual_cost', note: 'Passed as a computed metric' },
+      { label: 'Open risks', value: String(p.risks.length), field: 'risk_score', note: 'Description and status passed as text' }
+    ],
+    steps: [
+      'The prompt is assembled client-side by <code>buildNarrativePrompt()</code> from the same computed values shown in the KPI cards.',
+      'No raw source rows are sent — only the derived metrics, which keeps client and cost detail out of the request.',
+      'The exact prompt text is printed under "Prompt sent to the model" below the narrative, so any generated claim can be checked against its inputs.',
+      'Without an API key the panel shows a pre-written example so the page works for anyone browsing it.'
+    ],
+    caveats: [
+      'A language model can phrase a number persuasively but cannot validate it. The provenance strip exists so the reader checks the KPI, not the prose.'
+    ]
+  },
+
+  dq_pipeline: {
+    name: 'Progress Report Cleaning', scope: 'view', sources: ['reports'],
+    what: 'The validation and standardisation rules every daily progress report passes through before any number on this page can use it.',
+    formula: 'parse units → normalise dates → deduplicate → range-check → flag or accept',
+    read: 'The left table is what arrives; the right is what the warehouse stores. Rows are never silently dropped — anything corrected or capped keeps a flag so the change is auditable.',
+    calc: () => ({
+      lines: [
+        'Rule                        Applied to               Action',
+        '─'.repeat(64),
+        'Time-unit parsing           8h / 480m / 0.5 day      → decimal hours',
+        'Date normalisation          03/05/2026, 2026-3-6     → ISO 8601',
+        'Near-duplicate detection    same date + task + cost  → keep first, flag',
+        'Range check                 % complete > 100         → cap at 100, flag',
+        '',
+        `Flag rate across ${SOURCES.reports.volume.split(' · ')[0]}: <b>3.1%</b>`
+      ]
+    }),
+    take: () => '3.1% of incoming report rows need intervention. That rate is itself monitored — a spike usually means a team changed how they report, not that the work changed.',
+    inputs: () => [
+      { label: 'Raw daily progress reports', value: '6,470 rows', field: 'raw_field', note: 'Pre-validation' },
+      { label: 'Rows flagged', value: '~201 rows (3.1%)', field: 'raw_field', note: 'Corrected and flagged, not dropped' }
+    ],
+    steps: [
+      'Reports land nightly in the staging table exactly as submitted — the raw layer is never edited.',
+      'Rules run in order: unit parsing, date normalisation, deduplication, then range checks.',
+      'Every corrected row carries a flag column naming the rule that touched it, so a reviewer can always recover what was originally submitted.',
+      'Only rows that pass are eligible to feed the % complete cross-check against the schedule export.'
+    ],
+    caveats: [
+      'Capping an impossible value at 100% keeps the dashboard sane but hides a reporting problem. The flag is the signal to go and ask the crew what happened, not a fix.'
+    ]
+  }
+};
+
+function resolveCtx(metricId, projectId) {
+  const m = METRICS[metricId];
+  if (!m) return PORTFOLIO;
+  if (m.scope === 'project') return projects.find(p => p.id === projectId) || projects[0];
+  return PORTFOLIO;
+}
+const callable = (v, ctx) => (typeof v === 'function' ? v(ctx) : v);
+
+
 function statusPill(statusKey) {
   const s = STATUS[statusKey];
   const alert = (statusKey === 'warning' || statusKey === 'serious') ? ' alert' : '';
@@ -791,28 +1598,26 @@ function statusPill(statusKey) {
 
 /* ---------- Portfolio tiles ---------- */
 function renderTiles() {
-  const totalBudget = projects.reduce((s, p) => s + p.budget, 0);
-  const totalEv = projects.reduce((s, p) => s + p.ev, 0);
-  const totalPv = projects.reduce((s, p) => s + p.pv, 0);
-  const totalAc = projects.reduce((s, p) => s + p.actualCost, 0);
-  const weightedSpi = totalEv / totalPv;
-  const weightedCpi = totalEv / totalAc;
-  const atRisk = projects.filter(p => p.status === 'warning' || p.status === 'serious').length;
+  // Every portfolio figure comes from the PORTFOLIO roll-up so the tiles, the
+  // tooltips and the lineage drawer can never compute it three different ways.
+  const { totalBudget, weightedSpi, weightedCpi, atRisk } = PORTFOLIO;
 
   const tiles = [
-    { label: 'Total Portfolio Value', raw: totalBudget, fmt: fmtMoney,           sub: `${projects.length} active/closed projects` },
-    { label: 'Portfolio SPI',         raw: weightedSpi, fmt: n => n.toFixed(2),  sub: weightedSpi >= 0.95 ? 'On track overall' : 'Behind plan overall' },
-    { label: 'Portfolio CPI',         raw: weightedCpi, fmt: n => n.toFixed(2),  sub: weightedCpi >= 1 ? 'Under budget overall' : 'Over budget overall' },
-    { label: 'Projects At Risk',      raw: atRisk,      fmt: n => String(Math.round(n)), sub: 'SPI below 0.95' }
+    { label: 'Total Portfolio Value', metric: 'portfolio_value',  raw: totalBudget, fmt: fmtMoney,           sub: `${projects.length} active/closed projects` },
+    { label: 'Portfolio SPI',         metric: 'portfolio_spi',    raw: weightedSpi, fmt: n => n.toFixed(2),  sub: weightedSpi >= 0.95 ? 'On track overall' : 'Behind plan overall' },
+    { label: 'Portfolio CPI',         metric: 'portfolio_cpi',    raw: weightedCpi, fmt: n => n.toFixed(2),  sub: `${fmtMoneyK(PORTFOLIO.variance)} vs. plan` },
+    { label: 'Projects At Risk',      metric: 'projects_at_risk', raw: atRisk,      fmt: n => String(Math.round(n)), sub: 'SPI below 0.95' }
   ];
 
   document.getElementById('tileRow').innerHTML = tiles.map((t, i) => `
     <div class="tile">
-      <div class="label">${t.label}</div>
+      <div class="label" data-info="${t.metric}">${t.label}</div>
       <div class="value" data-tile="${i}">${t.fmt(0)}</div>
       <div class="sub">${t.sub}</div>
     </div>
   `).join('');
+
+  hydrateInfoDots(document.getElementById('tileRow'));
 
   tiles.forEach((t, i) => {
     const el = document.querySelector(`[data-tile="${i}"]`);
@@ -877,7 +1682,10 @@ function renderSpiChart() {
       tooltip.style.left = (e.clientX - rect.left) + 'px';
       tooltip.style.top = (e.clientY - rect.top) + 'px';
       tooltip.classList.add('show');
-      tooltip.innerHTML = `<strong>${p.name}</strong><br>SPI ${p.spi.toFixed(2)} · ${STATUS[p.status].label}`;
+      tooltip.innerHTML = `<strong>${p.name}</strong>`
+        + `<br>SPI ${p.spi.toFixed(2)} · ${STATUS[p.status].label}`
+        + `<br>${Math.round(p.actualPct * 100)}% actual ÷ ${Math.round(p.plannedPct * 100)}% planned`
+        + `<br>${fmtMoney(p.budget)} contract · ${Math.round(p.budget / PORTFOLIO.totalBudget * 100)}% of portfolio`;
     });
     g.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
   });
@@ -1004,7 +1812,11 @@ function wireScurveHover(p, meta) {
     tooltip.style.left = (e.clientX - rect.left) + 'px';
     tooltip.style.top = (e.clientY - rect.top) + 'px';
     tooltip.classList.add('show');
-    tooltip.innerHTML = `Planned: ${fmtMoney(meta.planned[idx])}` + (hasActual ? `<br>Actual: ${fmtMoney(meta.actual[idx])}` : '<br>Actual: not yet reported');
+    tooltip.innerHTML = `<strong>Period ${idx + 1} of ${meta.n}</strong>`
+      + `<br>Planned: ${fmtMoney(meta.planned[idx])}`
+      + (hasActual
+          ? `<br>Actual: ${fmtMoney(meta.actual[idx])}<br>Δ vs plan: ${fmtMoneyK(meta.planned[idx] - meta.actual[idx])} (+ = under)`
+          : '<br>Actual: not yet reported');
   });
   zone.addEventListener('mouseleave', () => {
     layer.innerHTML = '';
@@ -1045,7 +1857,7 @@ function setActiveNav(key) {
   });
 }
 function initNavSpy() {
-  const sections = ['summary', 'spi', 'detail', 'dq']
+  const sections = ['summary', 'spi', 'detail', 'dq', 'lineage']
     .map(id => document.getElementById(id))
     .filter(Boolean);
   if (!sections.length || !('IntersectionObserver' in window)) return;
@@ -1115,13 +1927,25 @@ fetch('https://api.anthropic.com/v1/messages', {
 })`;
 
   const kpis = [
-    { label: 'Schedule Performance (SPI)', raw: p.spi, fmt: n => n.toFixed(2), good: p.spi >= 0.95 },
-    { label: 'Cost Performance (CPI)',     raw: p.cpi, fmt: n => n.toFixed(2), good: p.cpi >= 1 },
-    { label: 'Schedule Variance',          raw: p.scheduleVarianceDays, fmt: n => (n >= 0 ? '+' : '') + Math.round(n) + 'd', good: p.scheduleVarianceDays >= 0 },
-    { label: 'Budget Variance',            raw: p.budgetVariance, fmt: fmtMoneyK, good: p.budgetVariance >= 0 }
+    { label: 'Schedule Performance (SPI)', metric: 'spi',             raw: p.spi, fmt: n => n.toFixed(2), good: p.spi >= 0.95 },
+    { label: 'Cost Performance (CPI)',     metric: 'cpi',             raw: p.cpi, fmt: n => n.toFixed(2), good: p.cpi >= 1 },
+    { label: 'Schedule Variance',          metric: 'sv_days',         raw: p.scheduleVarianceDays, fmt: n => (n >= 0 ? '+' : '') + Math.round(n) + 'd', good: p.scheduleVarianceDays >= 0 },
+    { label: 'Budget Variance',            metric: 'budget_variance', raw: p.budgetVariance, fmt: fmtMoneyK, good: p.budgetVariance >= 0 }
   ];
 
-  document.getElementById('projectDetail').innerHTML = `
+  // Chips under the narrative: the exact values handed to the model, each one
+  // a shortcut into that metric's lineage.
+  const provChips = [
+    { metric: 'spi',             label: 'SPI',               val: p.spi.toFixed(2) },
+    { metric: 'cpi',             label: 'CPI',               val: p.cpi.toFixed(2) },
+    { metric: 'sv_days',         label: 'Schedule variance', val: (p.scheduleVarianceDays >= 0 ? '+' : '') + p.scheduleVarianceDays + 'd' },
+    { metric: 'budget_variance', label: 'Budget variance',   val: fmtMoneyK(p.budgetVariance) },
+    { metric: 'risk_register',   label: 'Open risks',        val: String(p.risks.length) }
+  ];
+
+  const detailPanel = document.getElementById('projectDetail');
+  detailPanel.dataset.infoProject = p.id;
+  detailPanel.innerHTML = `
     <div class="project-header">
       <div>
         <h3>${p.name}</h3>
@@ -1133,7 +1957,7 @@ fetch('https://api.anthropic.com/v1/messages', {
     <div class="kpi-grid stagger">
       ${kpis.map((k, i) => `
         <div class="kpi-card">
-          <div class="kpi-label">${k.label}</div>
+          <div class="kpi-label" data-info="${k.metric}">${k.label}</div>
           <div class="kpi-value ${kpiValClass(k.good)}" data-kpi="${i}">${k.fmt(0)}</div>
         </div>`).join('')}
     </div>
@@ -1141,7 +1965,7 @@ fetch('https://api.anthropic.com/v1/messages', {
     <div class="detail-grid">
       <div class="chart-card">
         <div class="chart-head">
-          <div class="chart-title">Planned vs. Actual Cost</div>
+          <div class="chart-title" data-info="scurve">Planned vs. Actual Cost</div>
           <div class="legend">
             <span class="item"><span class="swatch dashed"></span>Planned</span>
             <span class="item"><span class="swatch" style="background:var(--series-1)"></span>Actual</span>
@@ -1151,13 +1975,13 @@ fetch('https://api.anthropic.com/v1/messages', {
       </div>
 
       <div class="card">
-        <div class="chart-title" style="margin-bottom:12px;">Open Risks</div>
+        <div class="chart-title" style="margin-bottom:12px;" data-info="risk_register">Open Risks</div>
         ${riskRows}
       </div>
     </div>
 
     <div class="chart-card" style="margin-top:16px;">
-      <div class="chart-title" style="margin-bottom:12px;">Task Progress</div>
+      <div class="chart-title" style="margin-bottom:12px;" data-info="task_progress">Task Progress</div>
       <table class="task-table">
         <thead><tr><th>Task</th><th>Progress</th><th>Actual</th><th>Planned</th></tr></thead>
         <tbody>${taskRows}</tbody>
@@ -1166,9 +1990,16 @@ fetch('https://api.anthropic.com/v1/messages', {
 
     <div class="narrative-card">
       <div class="narrative-head">
-        <span class="ai-badge">AI-generated insight</span>
+        <span class="ai-badge" data-info="narrative">AI-generated insight</span>
+        <span class="ai-status" id="aiStatus">Static example</span>
       </div>
       <p id="narrativeText">${p.narrative}</p>
+      <div class="prov-strip">
+        <div class="prov-label">Grounded in — every figure the model was given</div>
+        <div class="chip-row">
+          ${provChips.map(c => `<button class="prov-chip" type="button" data-trace="${c.metric}" data-trace-project="${p.id}">${c.label} <b>${c.val}</b></button>`).join('')}
+        </div>
+      </div>
       <div class="narrative-controls">
         <button class="link-btn" id="liveKeyToggle">Use live Claude API</button>
         <button class="link-btn" id="liveGenBtn" style="display:none;">Generate live insight</button>
@@ -1180,11 +2011,17 @@ fetch('https://api.anthropic.com/v1/messages', {
         <div class="key-note">Stored only in this browser's localStorage — never written to a file, never committed to git, never sent anywhere except https://api.anthropic.com.</div>
       </div>
       <details class="narrative-toggle">
+        <summary>Prompt sent to the model</summary>
+        <pre>${buildNarrativePrompt(p)}</pre>
+      </details>
+      <details class="narrative-toggle">
         <summary>How this works</summary>
         <pre>${apiSnippet}</pre>
       </details>
     </div>
   `;
+
+  hydrateInfoDots(detailPanel);
 
   const { svg, meta } = renderScurve(p);
   document.getElementById('scurveWrap').innerHTML = svg;
@@ -1316,6 +2153,304 @@ function wireNarrativeControls(p) {
   genBtn.addEventListener('click', () => generateLiveNarrative(p));
 }
 
+
+/* =========================================================================
+   INSIGHT TOOLTIPS
+   One popover element, one delegated listener. Triggers are declared in
+   markup with data-info="<metricId>"; project scope is inherited from the
+   nearest [data-info-project] ancestor, so re-rendering the detail panel
+   needs no re-wiring.
+   ========================================================================= */
+
+const ICON_TRACE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h4M4 12h7M4 18h4"/><circle cx="17" cy="6" r="2.4"/><circle cx="17" cy="18" r="2.4"/><path d="M17 8.4v7.2"/></svg>';
+
+function infoDot(metricId) {
+  const m = METRICS[metricId];
+  if (!m) return '';
+  return `<button class="info-dot" type="button" data-metric="${metricId}"
+    aria-label="About ${m.name}" aria-controls="infoPop" aria-expanded="false">i</button>`;
+}
+
+function hydrateInfoDots(root) {
+  (root || document).querySelectorAll('[data-info]').forEach(el => {
+    if (el.querySelector(':scope > .info-dot')) return;
+    el.insertAdjacentHTML('beforeend', infoDot(el.dataset.info));
+  });
+}
+
+function sourceChips(ids) {
+  return `<div class="chip-row">${ids.map(id => {
+    const s = SOURCES[id];
+    return `<span class="src-chip"><span class="sq" style="background:${s.color}"></span>${s.name}</span>`;
+  }).join('')}</div>`;
+}
+
+function projectIdFor(el) {
+  const holder = el.closest('[data-info-project]');
+  return holder ? holder.dataset.infoProject : activeProjectId;
+}
+
+function buildPopover(metricId, ctx) {
+  const m = METRICS[metricId];
+  const scopeLabel = m.scope === 'portfolio' ? 'Portfolio metric'
+                   : m.scope === 'view' ? 'Visualisation'
+                   : ctx.short || 'Project metric';
+  return `
+    <h5>${m.name}</h5>
+    <div class="pop-scope">${scopeLabel}</div>
+    <p class="pop-what">${m.what}</p>
+    <div class="pop-row">
+      <span class="pop-key">Formula</span>
+      <div class="pop-mono">${m.formula}</div>
+    </div>
+    <div class="pop-row">
+      <span class="pop-key">What this one is telling you</span>
+      <div class="pop-take">${callable(m.take, ctx)}</div>
+    </div>
+    <div class="pop-row">
+      <span class="pop-key">How to read it</span>
+      <div class="pop-read">${m.read}</div>
+    </div>
+    <div class="pop-foot">
+      <span class="pop-src">Source: <b>${m.sources.map(s => SOURCES[s].name).join(', ')}</b></span>
+      <button class="trace-btn" type="button" data-trace="${metricId}" data-trace-project="${ctx.id || ''}">${ICON_TRACE} Trace to source</button>
+    </div>`;
+}
+
+const infoPop = document.getElementById('infoPop');
+let popTrigger = null, popPinned = false, popTimer = null;
+
+function placePopover(trigger) {
+  const r = trigger.getBoundingClientRect();
+  const pw = infoPop.offsetWidth, ph = infoPop.offsetHeight;
+  const margin = 12;
+  let left = r.left + r.width / 2 - pw / 2;
+  left = Math.max(margin, Math.min(left, window.innerWidth - pw - margin));
+  let top = r.bottom + 9;
+  if (top + ph > window.innerHeight - margin) {
+    const above = r.top - ph - 9;
+    top = above > margin ? above : Math.max(margin, window.innerHeight - ph - margin);
+  }
+  infoPop.style.left = left + 'px';
+  infoPop.style.top = top + 'px';
+}
+
+function showPopover(trigger) {
+  clearTimeout(popTimer);
+  const metricId = trigger.dataset.metric;
+  if (!METRICS[metricId]) return;
+  if (popTrigger && popTrigger !== trigger) popTrigger.setAttribute('aria-expanded', 'false');
+  popTrigger = trigger;
+  infoPop.innerHTML = buildPopover(metricId, resolveCtx(metricId, projectIdFor(trigger)));
+  infoPop.classList.add('show');
+  trigger.setAttribute('aria-expanded', 'true');
+  placePopover(trigger);
+}
+
+function hidePopover(force) {
+  if (popPinned && !force) return;
+  clearTimeout(popTimer);
+  popPinned = false;
+  infoPop.classList.remove('show');
+  if (popTrigger) popTrigger.setAttribute('aria-expanded', 'false');
+  popTrigger = null;
+}
+function queueHide() {
+  if (popPinned) return;
+  clearTimeout(popTimer);
+  popTimer = setTimeout(() => hidePopover(), 220);
+}
+
+document.addEventListener('mouseover', e => {
+  const dot = e.target.closest && e.target.closest('.info-dot');
+  if (dot) { showPopover(dot); return; }
+  if (e.target.closest && e.target.closest('.info-pop')) clearTimeout(popTimer);
+});
+document.addEventListener('mouseout', e => {
+  const from = e.target.closest && (e.target.closest('.info-dot') || e.target.closest('.info-pop'));
+  if (!from) return;
+  const to = e.relatedTarget;
+  if (to && to.closest && (to.closest('.info-dot') === popTrigger || to.closest('.info-pop'))) return;
+  queueHide();
+});
+document.addEventListener('focusin', e => {
+  const dot = e.target.closest && e.target.closest('.info-dot');
+  if (dot) showPopover(dot);
+  else if (!(e.target.closest && e.target.closest('.info-pop'))) hidePopover(true);
+});
+document.addEventListener('click', e => {
+  const dot = e.target.closest && e.target.closest('.info-dot');
+  if (dot) {
+    e.preventDefault();
+    if (popTrigger === dot && popPinned) { hidePopover(true); return; }
+    popPinned = false; showPopover(dot); popPinned = true;
+    return;
+  }
+  if (!(e.target.closest && e.target.closest('.info-pop'))) hidePopover(true);
+});
+window.addEventListener('scroll', () => { if (popTrigger) hidePopover(true); }, true);
+window.addEventListener('resize', () => hidePopover(true));
+
+
+/* =========================================================================
+   LINEAGE DRAWER
+   The full trace for one metric: definition → calculation with this
+   instance's numbers → the raw inputs with their source column and refresh
+   stamp → the transformation path → what the metric does not tell you.
+   ========================================================================= */
+
+const drawer      = document.getElementById('lineageDrawer');
+const drawerScrim = document.getElementById('drawerScrim');
+const drawerBody  = document.getElementById('drawerBody');
+let drawerReturnFocus = null;
+
+function inputRows(m, ctx) {
+  const rows = callable(m.inputs, ctx);
+  return rows.map(r => {
+    const f = FIELDS[r.field];
+    const s = SOURCES[f.src];
+    return `<tr>
+      <td>${r.label}${r.note ? `<br><span class="lin-stamp">${r.note}</span>` : ''}</td>
+      <td class="lin-val">${r.value}</td>
+      <td>
+        <span class="src-chip"><span class="sq" style="background:${s.color}"></span>${s.name}</span>
+        <br><code>${f.col}</code>
+      </td>
+      <td class="lin-stamp">${s.refreshed}</td>
+    </tr>`;
+  }).join('');
+}
+
+function openLineage(metricId, projectId, returnEl) {
+  const m = METRICS[metricId];
+  if (!m) return;
+  const ctx = resolveCtx(metricId, projectId);
+  const calc = callable(m.calc, ctx);
+  const scopeLabel = m.scope === 'portfolio' ? 'All four projects'
+                   : m.scope === 'view' && metricId !== 'scurve' ? 'Portfolio view'
+                   : (ctx.name || 'Project');
+
+  drawerBody.innerHTML = `
+    <div class="lin-step" data-step="1">
+      <h4>Metric definition</h4>
+      <p>${m.what}</p>
+      <div class="lin-mono">${m.formula}</div>
+      <p>${m.read}</p>
+    </div>
+
+    <div class="lin-step" data-step="2">
+      <h4>Calculation — ${SNAPSHOT} snapshot</h4>
+      <div class="lin-mono">${calc.lines.join('\n')}</div>
+      <p><b>Reading:</b> ${callable(m.take, ctx)}</p>
+    </div>
+
+    <div class="lin-step" data-step="3">
+      <h4>Inputs and where they come from</h4>
+      <table class="lin-table">
+        <thead><tr><th>Input</th><th>Value</th><th>Source · column</th><th>Refreshed</th></tr></thead>
+        <tbody>${inputRows(m, ctx)}</tbody>
+      </table>
+    </div>
+
+    <div class="lin-step" data-step="4">
+      <h4>How the data gets here</h4>
+      <ul>${m.steps.map(s => `<li>${s}</li>`).join('')}</ul>
+    </div>
+
+    <div class="lin-step" data-step="5">
+      <h4>What this metric does not tell you</h4>
+      ${callable(m.caveats, ctx).map(c => `<div class="caveat">${c}</div>`).join('')}
+    </div>`;
+
+  document.getElementById('drawerTitle').textContent = m.name;
+  document.getElementById('drawerSub').textContent = `${scopeLabel} · snapshot ${SNAPSHOT}`;
+
+  drawerReturnFocus = returnEl || null;
+  drawer.classList.add('open');
+  drawerScrim.classList.add('show');
+  drawer.setAttribute('aria-hidden', 'false');
+  drawer.removeAttribute('inert');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('drawerClose').focus();
+}
+
+function closeLineage() {
+  drawer.classList.remove('open');
+  drawerScrim.classList.remove('show');
+  drawer.setAttribute('aria-hidden', 'true');
+  drawer.setAttribute('inert', '');
+  document.body.style.overflow = '';
+  if (drawerReturnFocus && document.contains(drawerReturnFocus)) drawerReturnFocus.focus();
+  drawerReturnFocus = null;
+}
+
+document.addEventListener('click', e => {
+  const t = e.target.closest && e.target.closest('[data-trace]');
+  if (!t) return;
+  e.preventDefault();
+  const returnEl = popTrigger || t;
+  hidePopover(true);
+  openLineage(t.dataset.trace, t.dataset.traceProject || activeProjectId, returnEl);
+});
+document.getElementById('drawerClose').addEventListener('click', closeLineage);
+drawer.addEventListener('keydown', e => {
+  if (e.key !== 'Tab') return;
+  const f = drawer.querySelectorAll('button, [href], input, [tabindex]:not([tabindex="-1"])');
+  if (!f.length) return;
+  const first = f[0], last = f[f.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
+drawerScrim.addEventListener('click', closeLineage);
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (drawer.classList.contains('open')) closeLineage();
+  else hidePopover(true);
+});
+
+
+/* =========================================================================
+   DATA SOURCES & LINEAGE SECTION
+   ========================================================================= */
+
+function renderSources() {
+  document.getElementById('sourceGrid').innerHTML = Object.values(SOURCES).map(s => `
+    <div class="src-card">
+      <div class="src-top">
+        <span class="sq" style="width:9px;height:9px;border-radius:3px;background:${s.color}"></span>
+        <span class="src-name">${s.name}</span>
+      </div>
+      <div class="src-kind">${s.kind}</div>
+      <dl>
+        <dt>Dataset</dt><dd><code>${s.dataset}</code></dd>
+        <dt>Owner</dt><dd>${s.owner}</dd>
+        <dt>Refresh</dt><dd>${s.cadence}</dd>
+        <dt>Last run</dt><dd><span class="freshness${s.fresh ? '' : ' stale'}"><span class="fdot"></span>${s.refreshed}</span></dd>
+        <dt>Volume</dt><dd>${s.volume}</dd>
+      </dl>
+      <p style="margin:11px 0 0;font-size:11.5px;line-height:1.6;color:var(--text-muted);">${s.notes}</p>
+    </div>`).join('');
+}
+
+const CATALOG_ORDER = [
+  'portfolio_value', 'portfolio_spi', 'portfolio_cpi', 'projects_at_risk',
+  'spi', 'cpi', 'sv_days', 'budget_variance',
+  'spi_chart', 'scurve', 'task_progress', 'risk_register', 'narrative', 'dq_pipeline'
+];
+
+function renderCatalog() {
+  const scopeName = { portfolio: 'Portfolio', project: 'Project', view: 'View' };
+  document.getElementById('catalogBody').innerHTML = CATALOG_ORDER.map(id => {
+    const m = METRICS[id];
+    return `<tr>
+      <td class="cat-name">${m.name}<br><span class="lin-stamp">${scopeName[m.scope]}</span></td>
+      <td class="cat-formula">${m.formula}</td>
+      <td>${sourceChips(m.sources)}</td>
+      <td><button class="trace-btn" type="button" data-trace="${id}">${ICON_TRACE} Trace</button></td>
+    </tr>`;
+  }).join('');
+}
+
 /* ---------- Scroll reveal ---------- */
 function initReveal() {
   const els = document.querySelectorAll('.reveal');
@@ -1368,6 +2503,9 @@ renderTiles();
 renderSpiChart();
 renderSidebarNav();
 renderDetail();
+renderSources();
+renderCatalog();
+hydrateInfoDots(document);
 initReveal();
 initTheme();
 initNavSpy();
